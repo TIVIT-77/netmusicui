@@ -5,8 +5,20 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    recommendResource:[],
+    userCookie:'',
+    audioSrc:[]
   },
   mutations: {
+    updateRecommend(state,data){
+      state.recommendResource = data
+    },
+    updateUserCookie(state,data){
+      state.userCookie=data
+    },
+    updateAudioSrc(state,data){
+      state.audioSrc=data
+    }
   },
   actions: {
   },

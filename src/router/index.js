@@ -1,23 +1,73 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
+import recommend from '../views/recommend.vue'
+import musicHall from '../views/musicHall.vue'
+import videoMV from '../views/videoMV.vue'
+import radioStation from '../views/radioStation.vue'
+import myLike from '../views/myLike.vue'
+import download from '../views/download.vue'
+import recentlyPlayed from '../views/recentlyPlayed.vue'
+import auditionList from '../views/auditionList.vue'
+import purchasedMusic from '../views/purchasedMusic.vue'
+import myLikeListVue from '../views/myLikeList.vue'
+
 
 Vue.use(VueRouter)
 
-const routes = [
-  {
+const routes = [{
     path: '/',
-    name: 'Home',
-    component: Home
+    component:Home,
+    children: [
+      {
+        path:"",
+        redirect:"/musicHall",
+      },
+      {
+        path:"recommend",
+        component:recommend,
+      },
+      {
+        path: 'musicHall',
+        component:musicHall,
+      },
+      {
+        path: 'videoMV',
+        component:videoMV,
+      },
+      {
+        path: 'radioStation',
+        component:radioStation,
+      },
+      {
+        path: 'myLike',
+        component:myLike,
+      },
+      {
+        path: 'download',
+        component:download,
+      },
+      {
+        path: 'recentlyPlayed',
+        component:recentlyPlayed,
+      },
+      {
+        path: 'auditionList',
+        component:auditionList,
+      },
+      {
+        path: 'purchasedMusic',
+        component:purchasedMusic,
+      },
+      {
+        path: 'myLikeList',
+        component:myLikeListVue,
+      },
+    ]
   },
-  {
-    path: '/about',
-    name: 'About',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
-  }
+
+
+
 ]
 
 const router = new VueRouter({

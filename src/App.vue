@@ -1,32 +1,55 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
+    <router-view></router-view>
   </div>
 </template>
+<script>
 
+</script>
 <style lang="scss">
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  @font-face {
+    font-family: 腾祥伯当行楷简;
+    src: url(./assets/fonts/TTXingKaiJ.ttf);
+  }
+
+  @font-face {
+    font-family: 方正风雅楷宋简体;
+    src: url(./assets/fonts/FZFengYKSJ.ttf);
+  }
+
+  @font-face {
+    font-family: 方正榜书行简体;
+    src: url(./assets/fonts/FZBangSXJW.ttf);
+  }
+
+  @font-face {
+    font-family: STHUPO;
+    src: url(./assets/fonts/STHUPO.TTF);
+  }
+  font-family: Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  position: absolute;
+  width: 1880px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
-
-#nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
+.vsc-initialized {
+}
+.el-popover {
+  // element UI中 .el-popover 中比较特殊，el-popover修改样式不生效是因为其与App同级。
+  text-align: center;
+  min-width: 25px;
+  i{
+    font-size: 25px;
   }
+}
+.el-menu{
+    border: none;
+    font-family: 方正榜书行简体;
 }
 </style>
