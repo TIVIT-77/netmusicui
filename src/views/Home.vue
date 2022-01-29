@@ -23,12 +23,12 @@ import asideMenu from "../components/asideMenu.vue"
 import headerVue from '../components/header.vue'
 import footerVue from "../components/footer.vue"
 export default {
-  components: {asideMenu, headerVue,footerVue}
+  components: { asideMenu, headerVue, footerVue }
 }
 
 </script>
 <style lang="scss">
-.el-badge{
+.el-badge {
   line-height: 50px;
 }
 .el-header,
@@ -38,8 +38,8 @@ export default {
   text-align: center;
   line-height: 60px;
 }
-.el-footer{
-  height: 80px!important;
+.el-footer {
+  height: 80px !important;
   line-height: 80px;
 }
 
@@ -88,6 +88,18 @@ export default {
       a {
         color: white;
         cursor: pointer;
+      }
+    }
+  }
+  ul {
+    li {
+      label {
+        cursor: pointer;
+      }
+      a {
+        margin-top: 5px;
+        text-decoration: none;
+        font-size: 15px;
       }
     }
   }
