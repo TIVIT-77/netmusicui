@@ -12,12 +12,17 @@
             </el-tooltip>
         </div>
         <div style="float: left;margin-left:30px;width:400px">
-            <el-input
-                placeholder="搜索音乐"
+            <el-autocomplete
+                :placeholder="placeholder"
+                @focus="placeholder = defaultPlaceholder"
+                @blur="placeholder = '搜索音乐'"
+                :fetch-suggestions="querySearch"
                 prefix-icon="el-icon-search"
                 v-model="searchData"
                 clearable
-            ></el-input>
+                @keypress.native.enter="onEnterPress"
+                @select="onEnterPress"
+            ></el-autocomplete>
         </div>
         <div class="login">
             <div v-if="!username">
@@ -25,7 +30,13 @@
                     <i class="el-icon-user" style="font-size: 30px;"></i>&emsp;
                     <el-input v-model="phone" placeholder="请输入手机号" clearable></el-input>&emsp;
                     <el-input placeholder="请输入密码" v-model="password" show-password clearable></el-input>&emsp;
-                    <el-button type="primary" icon="el-icon-check" circle @click="login" style="background-color: white; color: black;"></el-button>
+                    <el-button
+                        type="primary"
+                        icon="el-icon-check"
+                        circle
+                        @click="login"
+                        style="background-color: white; color: black;"
+                    ></el-button>
                 </div>
             </div>
             <div v-else class="user">
@@ -39,6 +50,12 @@
 <script>
 const axios = require('axios');
 export default {
+    created() {
+        this.init()
+    },
+    mounted() {
+        this.restaurants = this.loadAll();
+    },
     data() {
         return {
             searchData: "",
@@ -47,13 +64,37 @@ export default {
             phone: "",
             password: '',
             userId: "",
+            placeholder: '搜索音乐',
+            defaultPlaceholder: '',
+            restaurants: [],
+            pageSize: 30,
+            pageNum: 1,
         }
     },
     methods: {
-        init(){
-            axios('/api/search/default').then(res=>{
-                console.log(res.data);
+        init() {
+            axios('/api/search/default').then(res => {
+                this.defaultPlaceholder = res.data.data.showKeyword
             })
+            axios('/api/search/hot').then(res => {
+                this.restaurants = res.data.result.hots.map(item => {
+                    return { value: item.first }
+                })
+            })
+        },
+        querySearch(queryString, cb) {
+            var restaurants = this.restaurants;
+            var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants;
+            // 调用 callback 返回建议列表的数据
+            cb(results);
+        },
+        createFilter(queryString) {
+            return (restaurant) => {
+                return (restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+            };
+        },
+        loadAll() {
+            return this.restaurants
         },
         login() {
             axios.post(`/api/login/cellphone`, {
@@ -78,6 +119,37 @@ export default {
                         // console.log(res);
                     })
             })
+        },
+        onEnterPress() {
+            axios.post(`/api/cloudsearch`, {
+                keywords: this.searchData,
+                limit: this.pageSize,
+                offset: (this.pageNum - 1) * this.pageSize
+            }).then(res => {
+                let songs = res.data.result.songs
+                songs = songs.map((item,index) => {
+                    let parameters = {}
+                    parameters.id = item.id
+                    parameters.name = item.name
+                    parameters.alia = item.alia   //歌曲描述
+                    parameters.al = item.al   //专辑
+                    parameters.alPicUrl = item.al.picUrl //专辑封面
+                    parameters.ar = item.ar   //演唱者
+                    parameters.songList = parameters.ar.map(item => {
+                        let songsinfo = {}
+                        songsinfo.id = item.id
+                        songsinfo.name = item.name
+                        return songsinfo
+                    })
+                    parameters.singsString = (parameters.songList.map(item => {
+                        return item.name
+                    })).join(' / ')
+                    parameters.index=index
+                    return parameters
+                })
+                this.$store.commit('updateSearchSongs', songs)
+                this.$router.push('search')
+            })
         }
     }
 }
@@ -94,7 +166,7 @@ export default {
 }
 .user {
     display: flex;
-    justify-content:center;
+    justify-content: center;
     align-items: center;
 }
 .item {

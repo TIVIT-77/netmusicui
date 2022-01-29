@@ -1,8 +1,8 @@
 <template>
     <div>
         <el-carousel type="card" trigger="click">
-            <el-carousel-item v-for="item in imageUrl" :key="item">
-                <img :src="item" alt height="100%" width="100%" />
+            <el-carousel-item v-for="(item,key) in imageUrl" :key="key">
+                <img :src="item" alt height="100%" width="100%" @click="bannerClick(key)"/>
             </el-carousel-item>
         </el-carousel>
 
@@ -29,6 +29,7 @@ export default {
         return {
             imageUrl: [],
             playlists: [],
+            bannerInfoList:[],
         }
     },
     computed: {
@@ -41,13 +42,25 @@ export default {
     methods: {
         init() {
             axios(`/api/banner?type=0`).then(res => {
-                // console.log(res);
-                for (let item of res.data.banners)
-                    this.imageUrl.push(item.imageUrl)
+                for (let item of res.data.banners){
+                   this.imageUrl.push(item.imageUrl) 
+                }
+                this.bannerInfoList=res.data.banners.map(item=>{
+                    let parameters={}
+                    parameters.targetId=item.targetId
+                    parameters.typeTitle=item.typeTitle
+                    parameters.url=item.url
+                    parameters.encodeId=item.encodeId
+                    return parameters
+                })
             })
             axios(`/api/top/playlist?limit=40`).then(res => {
                 this.playlists = res.data.playlists
             })
+        },
+        bannerClick(index){
+            console.log(index);
+            this.bannerInfoList[index].url?Location.href=this.bannerInfoList[index].url:''
         },
         getPlayListAudio(playlistItem) {
             let loadingInstance = this.$loading({

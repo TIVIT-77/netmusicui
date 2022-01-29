@@ -75,6 +75,10 @@
         </div>
         <span>{{ audio.maxTime | formatSecond }}</span>
       </div>
+      <div class="control">
+        <i v-if="likeStarFlag" class="el-icon-star-on" @click="likeStar"></i>
+        <i v-else class="el-icon-star-off" @click="likeStar"></i>
+      </div>
     </div>
     <audio
       ref="audio"
@@ -111,7 +115,7 @@ export default {
   },
   watch: {
     '$store.state.audioSrc'(val) {
-      if (val.length>0) {
+      if (val.length > 0) {
         this.audio.index = -1
         this.next()
       }
@@ -128,6 +132,7 @@ export default {
   },
   data() {
     return {
+      likeStarFlag: false,
       audio: {
         songName: '给我个期待',//歌名
         singName: 'Crazy Bucket 陈楒潼 / 张天奕ZTYick',//演唱者
@@ -195,6 +200,8 @@ export default {
           });
           this.$refs.table.setCurrentRow(this.$store.state.audioSrc[index])
           loadingInstance.close();
+        } else {
+          this.next()
         }
       })
     },
@@ -204,7 +211,8 @@ export default {
         console.log('歌曲ID======', this.$store.state.audioSrc[i].id, res.data);
         this.audio.abilityPlay = res.data.success
         this.$notify.success({
-          title: res.data.message
+          title: res.data.message,
+          message: `为您播放 《${this.$store.state.audioSrc[i].name}》 ${this.$store.state.audioSrc[i].singsString}`
         })
         this.audio.abilityPlay = true
       }).catch(err => {
@@ -212,8 +220,8 @@ export default {
         console.log('err.response=======', err.response);
         this.audio.abilityPlay = false
         this.$notify.error({
-          title: 'Sorry',
-          message: err.response.data.message
+          title: `Sorry`,
+          message: `歌曲： ${this.$store.state.audioSrc[i].name},${err.response.data.message.slice(-4)}`
         })
         this.audio.abilityPlay = false
       })
@@ -232,14 +240,16 @@ export default {
       return realFormatSecond(val)
     },
     handleCurrentChange(currentRow) {
-      this.audio.songName = currentRow.name
-      this.audio.singName = currentRow.singsString
-      this.audio.alSrc = currentRow.alPicUrl
-      this.audio.musicId = currentRow.id
-      this.audio.audioSrc = `https://music.163.com/song/media/outer/url?id=${currentRow.id}`
-      this.audio.index = currentRow.index
-      this.audio.playing = false
-      console.log('currentRow===', currentRow);
+      if (currentRow) {
+        this.audio.songName = currentRow.name
+        this.audio.singName = currentRow.singsString
+        this.audio.alSrc = currentRow.alPicUrl
+        this.audio.musicId = currentRow.id
+        this.audio.audioSrc = `https://music.163.com/song/media/outer/url?id=${currentRow.id}`
+        this.audio.index = currentRow.index
+        this.audio.playing = false
+        console.log('currentRow===', currentRow);
+      }
     },
     audioEended() {
       this.audio.playing = false
@@ -247,7 +257,26 @@ export default {
       if (this.$store.state.audioSrc.length != 0) {
         this.next()
       }
-    }
+    },
+    likeStar() {
+      if (this.$store.state.userCookie) {
+        if (this.$store.state.audioSrc.length > 0) {
+          this.likeStarFlag = !this.likeStarFlag,
+            axios.post('/api/like', {
+              id: this.$store.state.audioSrc[this.audio.index].id,
+              like: this.likeStarFlag
+            })
+            this.$notify.success(this.likeStarFlag?'收藏音乐':'取消收藏')
+        } else {
+          this.$message.error('只能收藏播放列表里的歌')
+        }
+      } else {
+        this.$notify.error('请先登录')
+      }
+
+
+      //playlistId: 403208505
+    },
   },
   filters: {
     formatSecond(second) {
@@ -291,7 +320,7 @@ export default {
       .nameSlider {
         line-height: 0;
         .songName {
-          width: 1100px;
+          width: 1000px;
           height: 15px;
           line-height: 15px;
           font-size: 15px;
@@ -303,7 +332,7 @@ export default {
         .el-slider {
           margin: 0 20px;
           display: block;
-          width: 1100px;
+          width: 1000px;
         }
       }
     }
