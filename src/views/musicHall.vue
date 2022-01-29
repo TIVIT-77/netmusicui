@@ -60,7 +60,7 @@ export default {
         },
         bannerClick(index){
             console.log(index);
-            this.bannerInfoList[index].url?Location.href=this.bannerInfoList[index].url:''
+            this.bannerInfoList[index].url?window.location.href=this.bannerInfoList[index].url:''
         },
         getPlayListAudio(playlistItem) {
             let loadingInstance = this.$loading({
