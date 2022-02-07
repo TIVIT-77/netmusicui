@@ -69,6 +69,7 @@ export default {
             restaurants: [],
             pageSize: 30,
             pageNum: 1,
+            searchType:1,//type: 搜索类型；默认为 1 即单曲 , 取值意义 : 1: 单曲, 10: 专辑, 100: 歌手, 1000: 歌单, 1002: 用户, 1004: MV, 1006: 歌词, 1009: 电台, 1014: 视频, 1018:综合
         }
     },
     methods: {
@@ -124,7 +125,8 @@ export default {
             axios.post(`/api/cloudsearch`, {
                 keywords: this.searchData,
                 limit: this.pageSize,
-                offset: (this.pageNum - 1) * this.pageSize
+                offset: (this.pageNum - 1) * this.pageSize,
+                type:this.searchType
             }).then(res => {
                 let songs = res.data.result.songs
                 songs = songs.map((item,index) => {
@@ -145,6 +147,7 @@ export default {
                         return item.name
                     })).join(' / ')
                     parameters.index=index
+                    parameters.dt=item.dt/1000
                     return parameters
                 })
                 this.$store.commit('updateSearchSongs', songs)

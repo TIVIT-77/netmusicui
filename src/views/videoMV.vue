@@ -2,14 +2,14 @@
     <div class="page">
         <h1>推荐MV</h1>
         <div class="recommendMv">
-            <div v-for="(item, key) in mvRecommend" :key="key" width>
+            <div v-for="(item, key) in mvRecommend" :key="key" @click="getMv(item,1)">
                 <img :src="item.picUrl" />
                 <p>{{ item.name }}</p>
             </div>
         </div>
         <h1>MV</h1>
         <div class="recommendMv">
-            <div v-for="(item, key) in mvList" :key="key" width>
+            <div v-for="(item, key) in mvList" :key="key" @click="getMv(item,2)">
                 <img :src="item.cover" />
                 <p>{{ item.name }}</p>
             </div>
@@ -35,10 +35,18 @@ export default {
             axios('/api/personalized/mv').then(res => {
                 this.mvRecommend = res.data.result
             })
-            axios('http://localhost:9527/api/mv/all').then(res=>{
+            axios('/api/mv/all').then(res=>{
                 this.mvList=res.data.data
             })
         },
+        getMv(item,type){
+            axios.post('/api/mv/url',{
+                id:type==1?item.artistId:item.id
+            }).then(res=>{
+                console.log(res.data);
+            })
+            window.location.href=`https://music.163.com/?from=itab#/mv?id=${item.id}`
+        }
     }
 
 }
@@ -55,11 +63,11 @@ export default {
         display: flex;
         justify-content: space-around;
         flex-wrap: wrap;
+        cursor: pointer;
     }
     img {
         width: 700px;
         margin: 50px;
-        cursor: pointer;
     }
     p {
         margin-top: -40px;
