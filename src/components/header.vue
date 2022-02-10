@@ -60,7 +60,7 @@ export default {
         return {
             searchData: "",
             username: "",
-            userImgUrl: "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
+            userImgUrl: "",
             phone: "",
             password: '',
             userId: "",
@@ -69,7 +69,7 @@ export default {
             restaurants: [],
             pageSize: 30,
             pageNum: 1,
-            searchType:1,//type: 搜索类型；默认为 1 即单曲 , 取值意义 : 1: 单曲, 10: 专辑, 100: 歌手, 1000: 歌单, 1002: 用户, 1004: MV, 1006: 歌词, 1009: 电台, 1014: 视频, 1018:综合
+            searchType: 1,//type: 搜索类型；默认为 1 即单曲 , 取值意义 : 1: 单曲, 10: 专辑, 100: 歌手, 1000: 歌单, 1002: 用户, 1004: MV, 1006: 歌词, 1009: 电台, 1014: 视频, 1018:综合
         }
     },
     methods: {
@@ -102,13 +102,17 @@ export default {
                 phone: this.phone,
                 password: this.password,
             }).then(res => {
-                // console.log(res)
-                // console.log(res.data.profile.avatarUrl)
-                // console.log(res.data.profile.nickname);
-                this.username = res.data.profile.nickname;
-                this.userImgUrl = res.data.profile.avatarUrl;
-                this.userId = res.data.profile.userId;
-                this.$store.commit('updateUserCookie', res.data.cookie)
+                if (res && res.data && res.data.profile) {
+                    // console.log(res)
+                    // console.log(res.data.profile.avatarUrl)
+                    // console.log(res.data.profile.nickname);
+                    this.username = res.data.profile.nickname;
+                    this.userImgUrl = res.data.profile.avatarUrl;
+                    this.userId = res.data.profile.userId;
+                    this.$store.commit('updateUserCookie', res.data.cookie)
+                }else{
+                    return this.$message.error('登录失败');
+                }
             }).then(() => {
                 //获取每日推荐歌单
                 axios.post(`/api/recommend/resource`, {
@@ -126,10 +130,10 @@ export default {
                 keywords: this.searchData,
                 limit: this.pageSize,
                 offset: (this.pageNum - 1) * this.pageSize,
-                type:this.searchType
+                type: this.searchType
             }).then(res => {
                 let songs = res.data.result.songs
-                songs = songs.map((item,index) => {
+                songs = songs.map((item, index) => {
                     let parameters = {}
                     parameters.id = item.id
                     parameters.name = item.name
@@ -146,8 +150,8 @@ export default {
                     parameters.singsString = (parameters.songList.map(item => {
                         return item.name
                     })).join(' / ')
-                    parameters.index=index
-                    parameters.dt=item.dt/1000
+                    parameters.index = index
+                    parameters.dt = item.dt / 1000
                     return parameters
                 })
                 this.$store.commit('updateSearchSongs', songs)

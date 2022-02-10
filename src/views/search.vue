@@ -44,8 +44,9 @@ export default {
     },
     methods: {
         handleCurrentChange(row) {
-            this.playList.unshift(row)
-            this.$store.commit('updateAudioSrc', this.playList)
+            this.$store.state.audioSrc.unshift(row)
+            // this.playList.unshift(row)
+            // this.$store.commit('updateAudioSrc', this.playList)
         },
         //设置表头行的样式
         tableHeaderColor({ row, column, rowIndex, columnIndex }) {

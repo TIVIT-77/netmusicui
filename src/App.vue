@@ -33,12 +33,11 @@
   text-align: center;
   color: #2c3e50;
   position: absolute;
-  width: 1880px;
+  width: 100%;
+  height: 100%;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-}
-.vsc-initialized {
 }
 .el-popover {
   // element UI中 .el-popover 中比较特殊，el-popover修改样式不生效是因为其与App同级。

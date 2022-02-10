@@ -54,7 +54,7 @@ export default {
                     return parameters
                 })
             })
-            axios(`/api/top/playlist?limit=40`).then(res => {
+            axios(`/api/top/playlist?limit=16`).then(res => {
                 this.playlists = res.data.playlists
             })
         },
@@ -102,7 +102,7 @@ export default {
 
 <style lang="scss" scoped>
 .Recommendation {
-    height: 1100px;
+    height: 400px;
     ul {
         li {
             label {
