@@ -23,7 +23,7 @@ Vue.use(vuescroll, {
       keepShow: false, //是否即使 bar 不存在的情况下也保持显示。
     },
   }, 
-  name: 'mtwScroll' // 在这里自定义组件名字，默认是vueScroll
+  name: 'mtwscroll' // 在这里自定义组件名字，默认是vueScroll
 });
 Vue.config.productionTip = false
 

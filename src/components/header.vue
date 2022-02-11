@@ -56,6 +56,12 @@ export default {
     mounted() {
         this.restaurants = this.loadAll();
     },
+    watch: {
+        '$store.state.searchPageNum'(val) {
+            this.pageNum = val
+            this.onEnterPress()
+        }
+    },
     data() {
         return {
             searchData: "",
@@ -102,6 +108,11 @@ export default {
                 phone: this.phone,
                 password: this.password,
             }).then(res => {
+                let loadingInstance = this.$loading({
+                    text: '正在登录',
+                    target: document.querySelector("section"),
+                    background: 'rgba(0, 0, 0,0.5)',
+                });
                 if (res && res.data && res.data.profile) {
                     // console.log(res)
                     // console.log(res.data.profile.avatarUrl)
@@ -110,9 +121,10 @@ export default {
                     this.userImgUrl = res.data.profile.avatarUrl;
                     this.userId = res.data.profile.userId;
                     this.$store.commit('updateUserCookie', res.data.cookie)
-                }else{
+                } else {
                     return this.$message.error('登录失败');
                 }
+                loadingInstance.close();
             }).then(() => {
                 //获取每日推荐歌单
                 axios.post(`/api/recommend/resource`, {
@@ -126,11 +138,14 @@ export default {
             })
         },
         onEnterPress() {
-            axios.post(`/api/cloudsearch`, {
-                keywords: this.searchData,
-                limit: this.pageSize,
-                offset: (this.pageNum - 1) * this.pageSize,
-                type: this.searchType
+            //网易云经典问题，返回数据延迟，使用post请求返回数据始终是第一次请求返回的旧数据，get请求则问题解决
+            axios.get(`/api/cloudsearch`, {
+                params: {
+                    keywords: this.searchData,
+                    limit: this.pageSize,
+                    offset: (this.pageNum - 1) * this.pageSize,
+                    type: this.searchType
+                }
             }).then(res => {
                 let songs = res.data.result.songs
                 songs = songs.map((item, index) => {
@@ -152,9 +167,10 @@ export default {
                     })).join(' / ')
                     parameters.index = index
                     parameters.dt = item.dt / 1000
+                    parameters.searchKeyWords = this.searchData
                     return parameters
                 })
-                this.$store.commit('updateSearchSongs', songs)
+                this.pageNum == 1 ? this.$store.commit('updateSearchSongs', songs) : this.$store.state.searchSongs.push(...songs)
                 this.$router.push('search')
             })
         }

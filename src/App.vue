@@ -33,8 +33,8 @@
   text-align: center;
   color: #2c3e50;
   position: absolute;
-  width: 100%;
-  height: 100%;
+  width: 1920px;
+  height: 973px;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);

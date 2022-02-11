@@ -8,9 +8,7 @@
         <headerVue></headerVue>
       </el-header>
       <el-main>
-        <mtw-scroll>
           <router-view></router-view>
-        </mtw-scroll>
       </el-main>
       <el-footer>
         <footerVue></footerVue>
@@ -57,7 +55,7 @@ export default {
   background-color: #242424;
   color: white;
   text-align: center;
-  height: 800px;
+  padding: 0;
   .title {
     color: white;
     height: 35px;

@@ -54,7 +54,7 @@ export default {
                     return parameters
                 })
             })
-            axios(`/api/top/playlist?limit=16`).then(res => {
+            axios(`/api/top/playlist?limit=40`).then(res => {
                 this.playlists = res.data.playlists
             })
         },

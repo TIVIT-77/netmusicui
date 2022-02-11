@@ -9,6 +9,8 @@ export default new Vuex.Store({
     userCookie:'',
     audioSrc:[],
     searchSongs:[],
+    auditionList:[],
+    searchPageNum:1,
   },
   mutations: {
     updateRecommend(state,data){
@@ -20,8 +22,14 @@ export default new Vuex.Store({
     updateAudioSrc(state,data){
       state.audioSrc=data
     },
+    updateAuditionList(state,data){
+      state.auditionList=data
+    },
     updateSearchSongs(state,data){
       state.searchSongs=data
+    },
+    updateSearchPageNum(state,data){
+      state.searchPageNum=data
     },
   },
   actions: {
