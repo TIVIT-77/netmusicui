@@ -356,9 +356,12 @@ export default {
       if (this.$store.state.userCookie) {
         // if (this.$store.state.audioSrc.length > 0) {
         this.likeStarFlag = !this.likeStarFlag,
-          axios.post('/api/like', {
-            id: this.audio.currentRow.id,
-            like: this.likeStarFlag
+        //真服了经典网易云不能使用post请求，会导致接口延迟
+          axios.get('/api/like', {
+            params: {
+              id: this.audio.currentRow.id,
+              like: this.likeStarFlag
+            }
           })
         this.$notify.success(this.likeStarFlag ? '收藏音乐' : '取消收藏')
         this.likeList()
@@ -473,6 +476,6 @@ export default {
   }
 }
 ::v-deep ::-webkit-scrollbar {
- width: 0px;
+  width: 0px;
 }
 </style>
