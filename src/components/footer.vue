@@ -105,6 +105,7 @@
       </template>
       <div class="lyricBox">
         <el-table
+          height="700px"
           ref="lyricTable"
           :data="audio.lyricTableData"
           highlight-current-row
@@ -390,8 +391,8 @@ export default {
           let tempObj = {}
           tempObj[item.slice(0, 11)] = item.slice(11)
           tempObj.time = item.slice(1, 6)
-          tempObj.Timestamp=tempObj.time.split(':')
-          tempObj.Timestamp=Number(tempObj.Timestamp[0])*60+Number(tempObj.Timestamp[1])
+          tempObj.Timestamp = tempObj.time.split(':')
+          tempObj.Timestamp = Number(tempObj.Timestamp[0]) * 60 + Number(tempObj.Timestamp[1])
           tempObj.lyric = item.slice(11)
           tempObj.index = index
           return tempObj
@@ -403,11 +404,11 @@ export default {
       // console.log('lyricCurrentRow==', row, row.index);
       this.$nextTick(() => {
         let currentRow = document.querySelector(".current-row")
-        currentRow.scrollIntoView({ block: "center" })
+        currentRow ? currentRow.scrollIntoView({ block: "center" }) : ''
       })
     },
-    lyricClick(row){
-      this.$refs.audio.currentTime=row.Timestamp
+    lyricClick(row) {
+      this.$refs.audio.currentTime = row.Timestamp
     }
   },
   filters: {
@@ -470,5 +471,8 @@ export default {
       }
     }
   }
+}
+::v-deep ::-webkit-scrollbar {
+ width: 0px;
 }
 </style>
