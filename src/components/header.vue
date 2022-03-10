@@ -121,6 +121,7 @@ export default {
                     this.userImgUrl = res.data.profile.avatarUrl;
                     this.userId = res.data.profile.userId;
                     this.$store.commit('updateUserCookie', res.data.cookie)
+                    this.$store.commit('updateUserInfo', res.data)
                 } else {
                     return this.$message.error('登录失败');
                 }

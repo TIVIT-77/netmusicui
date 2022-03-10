@@ -41,7 +41,7 @@
                     show-overflow-tooltip
                 ></el-table-column>
             </el-table>
-            <el-alert type="success" :closable="false" center v-if="isLoading||isEnd">
+            <el-alert type="success" :closable="false" center effect="dark" v-if="isLoading||isEnd">
                 <template slot="title" v-if="isLoading">
                     <i class="el-icon-loading"></i> 正在努力加载...
                 </template>
@@ -50,7 +50,6 @@
                 </template>
             </el-alert>
         </div>
-
         <template v-else>
             <h1>还没有搜索关键词哦</h1>
         </template>

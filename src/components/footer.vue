@@ -35,7 +35,7 @@
         </el-badge>
 
         <i class="el-icon-arrow-left" @click="prev"></i>
-        <i v-if="this.audio.playing" class="el-icon-video-pause" @click="pause"></i>
+        <i v-if="audio.playing" class="el-icon-video-pause" @click="pause"></i>
         <i v-else class="el-icon-video-play" @click="play"></i>
         <i class="el-icon-arrow-right" @click="next"></i>
         <el-popover trigger="click">
@@ -56,7 +56,7 @@
       </div>
       <div class="audio">
         <div class="songDetail">
-          <img :src="audio.alSrc" />
+          <img :src="audio.alSrc" @click="openLyric" />
           <span>{{ audio.currentTime | formatSecond }}</span>
         </div>
         <div class="nameSlider">
@@ -81,6 +81,7 @@
       </div>
     </div>
     <audio
+      :v-show="false"
       ref="audio"
       @pause="audio.playing = false"
       @play="audio.playing = true"
@@ -91,6 +92,34 @@
       @ended="audioEended"
       autoplay
     ></audio>
+    <el-dialog
+      :title="this.audio.songName"
+      :visible.sync="audio.lyricDialogVisible"
+      fullscreen
+      append-to-body
+      center
+    >
+      <template slot="title">
+        <h1>{{ this.audio.songName }}</h1>
+        <h2>{{ this.audio.singName }}</h2>
+      </template>
+      <div class="lyricBox">
+        <el-table
+          ref="lyricTable"
+          :data="audio.lyricTableData"
+          highlight-current-row
+          @current-change="lyricCurrentChange"
+          empty-text="暂无歌词 T-T"
+          @row-click="lyricClick"
+        >
+          <el-table-column property="lyric" align="center">
+            <template slot-scope="scope">
+              <h3>{{ scope.row.lyric }}</h3>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -112,6 +141,8 @@ function realFormatSecond(second) {
 }
 export default {
   created() {
+    this.getLyric()
+    console.log('this.audio.currentRow===', this.audio.currentRow);
   },
   watch: {
     '$store.state.audioSrc'(val) {
@@ -120,6 +151,9 @@ export default {
         this.next()
       }
       this.$message.success('播放列表已更新')
+    },
+    '$store.state.userInfo'(val) {
+      this.likeList()
     },
     // 'audio.audioSrc'() {
     //   console.log('audioSrc is changed');
@@ -134,18 +168,52 @@ export default {
     return {
       likeStarFlag: false,
       audio: {
-        songName: '给我个期待',//歌名
-        singName: 'Crazy Bucket 陈楒潼 / 张天奕ZTYick',//演唱者
+        songName: '烈火战马+空城计+重庆魂 (Live)',//歌名
+        singName: 'GAI周延',//演唱者
         playing: false,// 该字段是音频是否处于播放状态的属性
         currentTime: 0, // 音频当前播放时长
         sliderFlag: true,
         maxTime: 0,// 音频最大播放时长
         index: 0,//歌单列表index
-        musicId: '',
+        musicId: 1478384763,
         abilityPlay: false,
-        audioSrc: `https://music.163.com/song/media/outer/url?id=1912677536.mp3`,
-        alSrc: "https://p1.music.126.net/vyoIqb22cx1XYQlFazJiHA==/109951166941743697.jpg",
+        audioSrc: `https://music.163.com/song/media/outer/url?id=1478384763.mp3`,
+        alSrc: "https://p1.music.126.net/NJf-GE3JeTimrsOvh05Flg==/109951165309368718.jpg",
         vol: 50,
+        lyricDialogVisible: false,//歌词界面
+        lyricTableData: [],//歌词
+        currentLyricIndex: 0,//当前播放歌词
+        currentRow: {
+          "id": 1478384763,
+          "name": "烈火战马+空城计+重庆魂 (Live)",
+          "alia": [],
+          "al": {
+            "id": 95266973,
+            "name": "中国新说唱2020 第五期",
+            "picUrl": "https://p1.music.126.net/NJf-GE3JeTimrsOvh05Flg==/109951165309368718.jpg",
+            "tns": [],
+            "pic_str": "109951165309368718",
+            "pic": 109951165309368720
+          },
+          "alPicUrl": "https://p1.music.126.net/NJf-GE3JeTimrsOvh05Flg==/109951165309368718.jpg",
+          "ar": [
+            {
+              "id": 1211046,
+              "name": "GAI周延",
+              "tns": [],
+              "alias": []
+            }
+          ],
+          "songList": [
+            {
+              "id": 1211046,
+              "name": "GAI周延"
+            }
+          ],
+          "singsString": "GAI周延",
+          "playlistName": "说唱的美妙旋律 富有节奏和情感",
+          "index": 39
+        },//当前歌曲
       }
     }
   },
@@ -160,12 +228,11 @@ export default {
     },
     //滑动进度条
     //element的slider滑块组件BUG,当拖动进度松开，进度会回到原来的位置，而快速拖动和点击进度条则不会出现
-    //原因：拖动进度条index值会被数据绑定监听audio对象值的this.audio.currentTime覆盖
+    //原因：拖动进度条index值会被数据绑定监听Audio对象值的this.audio.currentTime覆盖
     //解决方案：利用鼠标点击事件改变audio.sliderFlag，实现按下时不绑定
     changeCurrentTime(index) {
       this.$refs.audio.currentTime = index
       console.log('滑动进度条的index', index);
-      // console.log('this.$refs.audio.currentTime====', this.$refs.audio.currentTime);
     },
     // 下一首
     next() {
@@ -230,10 +297,22 @@ export default {
     getMaxTime(val) {
       this.audio.maxTime = val.target.duration
     },
-    //监听audio对象数据改变
+    //监听Audio对象数据改变
     getCurrentTime(res) {
       if (this.audio.sliderFlag) {
         this.audio.currentTime = res.target.currentTime
+        // console.log('this.$refs.audio.currentTime====', this.$refs.audio.currentTime,this.$refs.audio.currentTime===res.target.currentTime);
+        if (this.audio.lyricTableData.length > 0) {
+          this.audio.lyricTableData.map((item, index) => {
+            if (realFormatSecond(this.audio.currentTime).slice(3) == item.time) {
+              this.audio.currentLyricIndex = index
+              if (this.audio.lyricDialogVisible) {
+                this.$refs.lyricTable.setCurrentRow(this.audio.lyricTableData[index])
+              }
+
+            }
+          })
+        }
       }
     },
     realFormatSecond(val) {
@@ -248,7 +327,9 @@ export default {
         this.audio.audioSrc = `https://music.163.com/song/media/outer/url?id=${currentRow.id}`
         this.audio.index = currentRow.index
         this.audio.playing = false
-        console.log('currentRow===', currentRow);
+        this.audio.currentRow = currentRow
+        this.likeList()
+        console.log('this.audio.currentRow===', this.audio.currentRow);
       }
     },
     audioEended() {
@@ -258,25 +339,76 @@ export default {
         this.next()
       }
     },
+    //获取喜欢歌曲ID列表
+    likeList() {
+      axios.get(`/api/likelist`, {
+        params: {
+          uid: this.$store.state.userInfo.account.id
+        }
+      }).then(res => [
+        this.$store.commit('updateLikeIdsList', res.data.ids),
+        this.likeStarFlag = this.$store.state.likeIdslist.includes(this.audio.musicId),
+        console.log(this.$store.state.likeIdslist, this.audio.musicId, this.$store.state.likeIdslist.includes(this.audio.musicId)),
+      ])
+    },
     likeStar() {
       if (this.$store.state.userCookie) {
-        if (this.$store.state.audioSrc.length > 0) {
-          this.likeStarFlag = !this.likeStarFlag,
-            axios.post('/api/like', {
-              id: this.$store.state.audioSrc[this.audio.index].id,
-              like: this.likeStarFlag
-            })
-            this.$notify.success(this.likeStarFlag?'收藏音乐':'取消收藏')
-        } else {
-          this.$message.error('只能收藏播放列表里的歌')
-        }
+        // if (this.$store.state.audioSrc.length > 0) {
+        this.likeStarFlag = !this.likeStarFlag,
+          axios.post('/api/like', {
+            id: this.audio.currentRow.id,
+            like: this.likeStarFlag
+          })
+        this.$notify.success(this.likeStarFlag ? '收藏音乐' : '取消收藏')
+        this.likeList()
+        // } else {
+        //   this.$message.error('只能收藏播放列表里的歌')
+        // }
       } else {
         this.$notify.error('请先登录')
       }
-
-
-      //playlistId: 403208505
     },
+    openLyric() {
+      this.getLyric().then(() => {
+        this.audio.lyricDialogVisible = true
+        this.$nextTick(() => {
+          //因为歌词数据每次在dialog打开都会调用接口重新加载，就算数据一样，堆地址也已经改变了
+          //所以会导致歌曲暂停时没有调用Audio对象的timeUpdate方法设置歌词当前行的方法，因为数据变了之前设置的当前行也没有了
+          //需要存储上次设置的当前行this.audio.currentLyricIndex,在打开dialog，用来设置
+          this.$refs.lyricTable.setCurrentRow(this.audio.lyricTableData[this.audio.currentLyricIndex])
+        })
+      })
+
+    },
+    async getLyric() {
+      await axios.get(`/api/lyric`, {
+        params: {
+          id: this.audio.musicId
+        }
+      }).then(res => {
+        this.audio.lyricTableData = res.data.lrc.lyric.split('\n').map((item, index) => {
+          let tempObj = {}
+          tempObj[item.slice(0, 11)] = item.slice(11)
+          tempObj.time = item.slice(1, 6)
+          tempObj.Timestamp=tempObj.time.split(':')
+          tempObj.Timestamp=Number(tempObj.Timestamp[0])*60+Number(tempObj.Timestamp[1])
+          tempObj.lyric = item.slice(11)
+          tempObj.index = index
+          return tempObj
+        }).slice(0, -1)
+        console.log('this.audio.lyricTableData===', this.audio.lyricTableData);
+      })
+    },
+    lyricCurrentChange(row) {
+      // console.log('lyricCurrentRow==', row, row.index);
+      this.$nextTick(() => {
+        let currentRow = document.querySelector(".current-row")
+        currentRow.scrollIntoView({ block: "center" })
+      })
+    },
+    lyricClick(row){
+      this.$refs.audio.currentTime=row.Timestamp
+    }
   },
   filters: {
     formatSecond(second) {
@@ -315,6 +447,7 @@ export default {
         img {
           height: 50px;
           margin-right: 15px;
+          cursor: pointer;
         }
       }
       .nameSlider {

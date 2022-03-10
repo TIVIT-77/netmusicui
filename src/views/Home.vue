@@ -7,8 +7,11 @@
       <el-header>
         <headerVue></headerVue>
       </el-header>
+
       <el-main>
+        <mtw-scroll>
           <router-view></router-view>
+        </mtw-scroll>
       </el-main>
       <el-footer>
         <footerVue></footerVue>
@@ -26,7 +29,7 @@ export default {
 
 </script>
 <style lang="scss">
-.el-container{
+.el-container {
   width: 100%;
   height: 100%;
 }

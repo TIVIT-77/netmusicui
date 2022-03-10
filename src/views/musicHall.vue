@@ -1,8 +1,8 @@
 <template>
     <div>
         <el-carousel type="card" trigger="click">
-            <el-carousel-item v-for="(item,key) in imageUrl" :key="key">
-                <img :src="item" alt height="100%" width="100%" @click="bannerClick(key)"/>
+            <el-carousel-item v-for="(item, key) in imageUrl" :key="key">
+                <img :src="item" alt height="100%" width="100%" @click="bannerClick(key)" />
             </el-carousel-item>
         </el-carousel>
 
@@ -22,14 +22,13 @@
 </template>
 
 <script>
-import HomeVue from './Home.vue';
 const axios = require('axios');
 export default {
     data() {
         return {
             imageUrl: [],
             playlists: [],
-            bannerInfoList:[],
+            bannerInfoList: [],
         }
     },
     computed: {
@@ -42,15 +41,15 @@ export default {
     methods: {
         init() {
             axios(`/api/banner?type=0`).then(res => {
-                for (let item of res.data.banners){
-                   this.imageUrl.push(item.imageUrl) 
+                for (let item of res.data.banners) {
+                    this.imageUrl.push(item.imageUrl)
                 }
-                this.bannerInfoList=res.data.banners.map(item=>{
-                    let parameters={}
-                    parameters.targetId=item.targetId
-                    parameters.typeTitle=item.typeTitle
-                    parameters.url=item.url
-                    parameters.encodeId=item.encodeId
+                this.bannerInfoList = res.data.banners.map(item => {
+                    let parameters = {}
+                    parameters.targetId = item.targetId
+                    parameters.typeTitle = item.typeTitle
+                    parameters.url = item.url
+                    parameters.encodeId = item.encodeId
                     return parameters
                 })
             })
@@ -58,9 +57,9 @@ export default {
                 this.playlists = res.data.playlists
             })
         },
-        bannerClick(index){
+        bannerClick(index) {
             console.log(index);
-            this.bannerInfoList[index].url?window.location.href=this.bannerInfoList[index].url:''
+            this.bannerInfoList[index].url ? window.location.href = this.bannerInfoList[index].url : ''
         },
         getPlayListAudio(playlistItem) {
             let loadingInstance = this.$loading({
@@ -70,7 +69,7 @@ export default {
             });
             axios(`/api/playlist/track/all?id=${playlistItem.id}`).then(res => {
                 let songs = res.data.songs
-                songs = songs.map((item,index) => {
+                songs = songs.map((item, index) => {
                     let parameters = {}
                     parameters.id = item.id
                     parameters.name = item.name
@@ -88,7 +87,7 @@ export default {
                         return item.name
                     })).join(' / ')
                     parameters.playlistName = playlistItem.name
-                    parameters.index=index
+                    parameters.index = index
                     return parameters
                 })
                 this.$store.commit('updateAudioSrc', songs)

@@ -11,6 +11,8 @@ export default new Vuex.Store({
     searchSongs:[],
     auditionList:[],
     searchPageNum:1,
+    userInfo:{},
+    likeIdslist:[],
   },
   mutations: {
     updateRecommend(state,data){
@@ -30,6 +32,12 @@ export default new Vuex.Store({
     },
     updateSearchPageNum(state,data){
       state.searchPageNum=data
+    },
+    updateUserInfo(state,data){
+      state.userInfo=data
+    },
+    updateLikeIdsList(state,data){
+      state.likeIdslist=data
     },
   },
   actions: {
