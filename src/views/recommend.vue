@@ -1,15 +1,17 @@
 <template>
     <div v-if="$store.state.userCookie">
-        <div class="title">每日歌单推荐</div>
-        <div class="Recommendation">
-            <ul>
-                <li v-for="(item, i) in recommend" :key="i">
-                    <label @click="getPlayListAudio(i)">
-                        <img :src="item.picUrl" alt />
-                        <a>{{ item.name }}</a>
-                    </label>
-                </li>
-            </ul>
+        <div class="cardList">
+            <p>每日歌单推荐</p>
+            <div class="hotDjList">
+                <div class="hotDj" v-for="(item, i) in recommend" :key="i" @click="getPlayListAudio(i)">
+                    <img :src="item.picUrl" alt="item.name" width="100%" />
+                    <p class="annotation">
+                        <span>[{{ item.category }}]</span>
+                        <span>{{ item.copywriter }}</span>
+                    </p>
+                    <p>{{ item.name }}</p>
+                </div>
+            </div>
         </div>
     </div>
     <div v-else class="promptLogin">

@@ -6,17 +6,25 @@
             </el-carousel-item>
         </el-carousel>
 
-        <div class="title">网友精选碟(歌单)</div>
-        <div class="Recommendation">
-            <ul>
-                <li v-for="(item, i) in playlists" :key="i">
-                    <label @click="getPlayListAudio(item)">
-                        <img :src="item.coverImgUrl" alt />
-                        <a target="view_window">{{ item.name }}</a>
-                        <!-- <a target="view_window" :href="`https://music.163.com/playlist?id=${item.id}`">{{ item.name }}</a> -->
-                    </label>
-                </li>
-            </ul>
+        <div class="cardList">
+            <p>网友精选碟(歌单)</p>
+            <div class="hotDjList">
+                <div
+                    class="hotDj"
+                    v-for="(item, i) in playlists"
+                    :key="i"
+                    @click="getPlayListAudio(item)"
+                >
+                    <img :src="item.coverImgUrl" alt="item.name" width="100%" />
+                    <p class="annotation">
+                        <span>[{{ item.tags.join() }}]</span>
+                        <el-tooltip :content="item.description" :offset="-700">
+                            <span>{{ item.description }}</span>
+                        </el-tooltip>
+                    </p>
+                    <p>{{ item.name }}</p>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -100,19 +108,4 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.Recommendation {
-    height: 400px;
-    ul {
-        li {
-            label {
-                cursor: pointer;
-            }
-            a {
-                margin-top: 5px;
-                text-decoration: none;
-                font-size: 15px;
-            }
-        }
-    }
-}
 </style>

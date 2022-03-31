@@ -59,52 +59,45 @@ export default {
   color: white;
   text-align: center;
   padding: 0;
-  .title {
+  .cardList {
     color: white;
     height: 35px;
     width: 1600px;
+    margin: 0 auto;
     line-height: 35px;
     border-bottom: 2px solid #c10d0c;
     font-size: larger;
   }
-  .Recommendation {
-    margin: 0;
-    padding: 0;
-    height: 230px;
-    width: 1600px;
-    display: block;
-    list-style: none;
-    li {
-      float: left;
-      display: block;
-      width: 140px;
-      height: 204px;
-      padding-left: 42px;
-      font-size: 12px;
-      color: #333;
-      font-family: Arial, Helvetica, sans-serif;
-      overflow: hidden;
-      padding: 0 0 15px 50px;
-      line-height: 1.4;
-      img {
-        display: block;
-        width: 100%;
-      }
-      a {
-        color: white;
-        cursor: pointer;
-      }
-    }
-  }
-  ul {
-    li {
-      label {
-        cursor: pointer;
-      }
-      a {
-        margin-top: 5px;
-        text-decoration: none;
+  .hotDjList {
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+    margin: 25px 0;
+    .hotDj {
+      width: 215px;
+      margin: 25px;
+      p {
+        margin: 0;
+        margin-top: -10px;
         font-size: 15px;
+        font-family: 腾祥伯当行楷简, Arial, Helvetica, sans-serif;
+      }
+      .annotation {
+        font-size: 7px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        span:first-child {
+          padding: 2px;
+          border: 1px solid #e60026;
+          color: #e60026;
+        }
+        span:last-child {
+          margin-left: 2px;
+          padding: 2px;
+          color: #95a5a6;
+          border: 0;
+        }
       }
     }
   }

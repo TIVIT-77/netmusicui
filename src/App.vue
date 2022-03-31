@@ -43,21 +43,24 @@
   // element UI中 .el-popover 中比较特殊，el-popover修改样式不生效是因为其与App同级。
   text-align: center;
   min-width: 25px;
-  i{
+  i {
     font-size: 25px;
   }
 }
-.el-menu{
-    border: none;
-    font-family: 方正榜书行简体;
+.el-menu {
+  border: none;
+  font-family: 方正榜书行简体;
 }
 /* 滚动条宽度 */
 ::-webkit-scrollbar {
- width: 7px;
+  width: 7px;
 }
 /* 滚动条的滑块 */
 ::-webkit-scrollbar-thumb {
- background-color: #a1a3a9;
- border-radius: 3px;
+  background-color: #a1a3a9;
+  border-radius: 3px;
+}
+.el-tooltip__popper {
+    max-width: 1000px;
 }
 </style>

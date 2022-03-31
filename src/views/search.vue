@@ -133,7 +133,6 @@ export default {
                     }else{
                         this.$message.error('你还没有选中歌曲')
                     }
-                    
                     break;
                 case 2:
                     this.$store.state.auditionList.unshift(...this.selectedList)

@@ -356,15 +356,15 @@ export default {
       if (this.$store.state.userCookie) {
         // if (this.$store.state.audioSrc.length > 0) {
         this.likeStarFlag = !this.likeStarFlag,
-        //真服了经典网易云不能使用post请求，会导致接口延迟
+          //真服了经典网易云不能使用post请求，会导致接口延迟
           axios.get('/api/like', {
             params: {
               id: this.audio.currentRow.id,
               like: this.likeStarFlag
             }
+          }).then(res => {
+            this.$notify.success(this.likeStarFlag ? '收藏音乐' : '取消收藏')
           })
-        this.$notify.success(this.likeStarFlag ? '收藏音乐' : '取消收藏')
-        this.likeList()
         // } else {
         //   this.$message.error('只能收藏播放列表里的歌')
         // }

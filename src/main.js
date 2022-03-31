@@ -25,6 +25,7 @@ Vue.use(vuescroll, {
   }, 
   name: 'mtwScroll' // 在这里自定义组件名字，默认是vueScroll
 });
+Vue.prototype.axios = axios;
 Vue.config.productionTip = false
 
 new Vue({
