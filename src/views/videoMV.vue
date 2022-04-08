@@ -19,9 +19,9 @@
 
         <h1>推荐MV</h1>
 
-        <el-carousel trigger="click" height="500px" type="card">
-            <el-carousel-item v-for="(item, key) in mvRecommend" :label="item.name" :name="item.name" indicator-position="outside" :key="key">
-                <el-image fit="scale-down" :src="item.picUrl" @click="getMv(item, 1)"></el-image>
+        <el-carousel trigger="click" height="500px" :autoplay="false" indicator-position="outside">
+            <el-carousel-item v-for="(item, key) in mvRecommend" :label="item.name" :name="item.name" :key="key" >
+                <el-image fit="contain" :src="item.picUrl" @click="getMv(item, 1)"></el-image>
             </el-carousel-item>
         </el-carousel>
         <h1>MV</h1>
@@ -100,14 +100,19 @@ export default {
     p {
         margin-top: -40px;
     }
-    .el-image{
-        height: 500px;
-    }
 }
 ::v-deep .el-dialog__body {
     display: flex;
     justify-content: center;
     align-items: center;
     padding-top: 10px;
+}
+.el-carousel{
+    width: 100%;
+    .el-image{
+        width: 100%;
+        height: 100%;
+    }
+    
 }
 </style>

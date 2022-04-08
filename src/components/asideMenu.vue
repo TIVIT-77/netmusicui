@@ -20,10 +20,8 @@
                     </template>
                     <el-menu-item-group>
                         <el-menu-item index="myLike" route="myLike">我喜欢</el-menu-item>
-                        <el-menu-item index="download" route="download">本地和下载</el-menu-item>
                         <el-menu-item index="recentlyPlayed" route="recentlyPlayed">最近播放</el-menu-item>
                         <el-menu-item index="auditionList" route="auditionList">试听列表</el-menu-item>
-                        <el-menu-item index="purchasedMusic" route="purchasedMusic">已购音乐</el-menu-item>
                     </el-menu-item-group>
                 </el-submenu>
                 <el-submenu index="3">

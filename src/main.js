@@ -6,6 +6,8 @@ import 'element-ui/lib/theme-chalk/index.css';
 import ElementUi from 'element-ui';
 import axios from 'axios';
 import vuescroll from 'vuescroll';
+import '../src/assets/fontsStyle/iconfont.js'
+import '../src/assets/fontsStyle/iconfont.css'
 
 Vue.use(ElementUi)
 Vue.use(vuescroll, {
@@ -17,7 +19,7 @@ Vue.use(vuescroll, {
       background: "#000000", //轨道的背景色。
       opacity: 0, //轨道的透明度。 0是透明，1是不透明
       size: "6px", //轨道的尺寸。
-      specifyBorderRadius: false, //是否指定轨道的 borderRadius， 如果不那么将会自动设置。
+      specifyBorderRadius: false, //是否指定轨道的 borderRadius， 如果false那么将会自动设置。
       gutterOfEnds: null,//轨道距 x 和 y 轴两端的距离
       gutterOfSide: "0px", //距离容器的距离
       keepShow: false, //是否即使 bar 不存在的情况下也保持显示。

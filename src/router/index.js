@@ -6,10 +6,8 @@ import musicHall from '../views/musicHall.vue'
 import videoMV from '../views/videoMV.vue'
 import radioStation from '../views/radioStation.vue'
 import myLike from '../views/myLike.vue'
-import download from '../views/download.vue'
 import recentlyPlayed from '../views/recentlyPlayed.vue'
 import auditionList from '../views/auditionList.vue'
-import purchasedMusic from '../views/purchasedMusic.vue'
 import myLikeListVue from '../views/myLikeList.vue'
 import search from '../views/search.vue'
 
@@ -50,20 +48,12 @@ const routes = [{
         component:myLike,
       },
       {
-        path: 'download',
-        component:download,
-      },
-      {
         path: 'recentlyPlayed',
         component:recentlyPlayed,
       },
       {
         path: 'auditionList',
         component:auditionList,
-      },
-      {
-        path: 'purchasedMusic',
-        component:purchasedMusic,
       },
       {
         path: 'myLikeList',

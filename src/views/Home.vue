@@ -7,7 +7,6 @@
       <el-header>
         <headerVue></headerVue>
       </el-header>
-
       <el-main>
         <mtw-scroll>
           <router-view></router-view>
@@ -20,13 +19,12 @@
   </el-container>
 </template>
 <script>
-import asideMenu from "../components/asideMenu.vue"
+import asideMenu from '../components/asideMenu.vue'
 import headerVue from '../components/header.vue'
-import footerVue from "../components/footer.vue"
+import footerVue from '../components/footer.vue'
 export default {
-  components: { asideMenu, headerVue, footerVue }
+  components: { asideMenu, headerVue, footerVue },
 }
-
 </script>
 <style lang="scss">
 .el-container {
@@ -61,9 +59,9 @@ export default {
   padding: 0;
   .cardList {
     color: white;
-    height: 35px;
     width: 1600px;
     margin: 0 auto;
+    margin-bottom: 15px;
     line-height: 35px;
     border-bottom: 2px solid #c10d0c;
     font-size: larger;
@@ -76,11 +74,15 @@ export default {
     .hotDj {
       width: 215px;
       margin: 25px;
+      img {
+        cursor: pointer;
+      }
       p {
         margin: 0;
         margin-top: -10px;
         font-size: 15px;
         font-family: 腾祥伯当行楷简, Arial, Helvetica, sans-serif;
+        cursor: pointer;
       }
       .annotation {
         font-size: 7px;
@@ -102,4 +104,38 @@ export default {
     }
   }
 }
+.aixin {
+  color: #ff6a6a;
+  font-size: 35px !important;
+}
+.el-table {
+  background-color: transparent !important;
+  color: white;
+  th {
+    background-color: transparent !important;
+  }
+  tr {
+    background-color: transparent !important;
+  }
+  td.el-table__cell {
+    border: 0;
+  }
+  .el-table__body tr.current-row > td.el-table__cell {
+    background-color: transparent !important;
+    color: #6f98fe;
+  }
+  //CSS 优先规则：优先级关系：内联样式 > ID 选择器 > 类选择器 = 属性选择器 = 伪类选择器 > 标签选择器 = 伪元素选择器
+  //所以上面当前行样式优先级高于下边标签选择每一行,实现hover不影响当前行颜色
+  .el-table__body tr:hover > td {
+    background-color: transparent !important;
+    color: #13c2c2;
+  }
+  &::before {
+    height: 0 !important;
+  }
+}
+.el-popover {
+  background-color: #242424;
+}
 </style>
+
