@@ -185,10 +185,13 @@ export default {
   watch: {
     '$store.state.audioSrc'(val) {
       if (val.length > 0) {
-        this.audio.index = -1
+        this.audio.index = this.$store.state.currentIndex-1
         this.next()
       }
       this.$message.success('播放列表已更新')
+    },
+    'audio.index'(val){
+      this.$store.state.currentIndex=val
     },
     '$store.state.userInfo'(val) {
       this.likeList()
