@@ -16,6 +16,7 @@
         :placeholder="placeholder"
         @focus="placeholder = defaultPlaceholder"
         @blur="placeholder = '搜索音乐'"
+        @change="$store.state.searchPageNum=1"
         :fetch-suggestions="querySearch"
         prefix-icon="el-icon-search"
         v-model="searchData"
