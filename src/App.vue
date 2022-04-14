@@ -3,9 +3,7 @@
     <router-view></router-view>
   </div>
 </template>
-<script>
-
-</script>
+<script></script>
 <style lang="scss">
 #app {
   @font-face {
@@ -33,11 +31,10 @@
   text-align: center;
   color: #2c3e50;
   position: absolute;
-  width: 1920px;
-  height: 973px;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
 }
 .el-popover {
   // element UI中 .el-popover 中比较特殊，el-popover修改样式不生效是因为其与App同级。
@@ -61,6 +58,7 @@
   border-radius: 3px;
 }
 .el-tooltip__popper {
-    max-width: 1000px;
+  max-width: 1000px;
 }
 </style>
+

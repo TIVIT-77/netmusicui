@@ -109,8 +109,8 @@ export default {
         background: 'rgba(0, 0, 0,0.5)', // 遮罩层颜色
       })
       if (type == 'songs') {
-        let songs = this.handleSongs(this.$store.state.recommendSongsList.dailySongs.slice(i,i+1))
-        this.$store.commit('updateAudioSrc',songs)
+        let songs = this.handleSongs(this.$store.state.recommendSongsList.dailySongs)
+        this.$store.commit('updateAudioSrc',{'data':songs,'currentIndex':i})
         loadingInstance.close()
       } else {
         axios(`/api/playlist/track/all?id=${this.$store.state.recommendResource[i].id}`).then((res) => {

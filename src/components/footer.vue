@@ -3,7 +3,7 @@
     <div class="content">
       <div class="control">
         <el-badge :value="this.$store.state.audioSrc.length" type="primary">
-          <el-popover width="400" trigger="click">
+          <el-popover width="400" trigger="click" @after-enter="showPopover">
             <el-table
               ref="table"
               :data="$store.state.audioSrc"
@@ -260,6 +260,12 @@ export default {
     }
   },
   methods: {
+    showPopover(){
+      this.$nextTick(() => {
+        let currentRow = document.querySelector('.el-popover .current-row')
+        currentRow.scrollIntoView({ block: 'center' })
+      })
+    },
     // 播放音频
     play() {
       this.$refs.audio.play()
@@ -379,6 +385,7 @@ export default {
         this.likeList()
         console.log('this.audio.currentRow===', this.audio.currentRow)
       }
+      this.showPopover()
     },
     audioEended() {
       this.audio.playing = false

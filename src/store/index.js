@@ -67,9 +67,14 @@ export default new Vuex.Store({
     updateUserCookie(state, data) {
       state.userCookie = data
     },
-    updateAudioSrc(state, data, currentIndex=0) {
-      state.audioSrc = data
-      state.currentIndex = currentIndex
+    updateAudioSrc(state, data) {
+      if (Object.prototype.toString.call(data) === '[object Object]') {
+        state.currentIndex = data.currentIndex||0
+        state.audioSrc = data.data||[]
+      } else {
+        state.audioSrc = data
+        state.currentIndex = 0
+      }
     },
     updateAuditionList(state, data) {
       state.auditionList = data
