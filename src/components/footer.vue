@@ -385,7 +385,7 @@ export default {
         this.likeList()
         console.log('this.audio.currentRow===', this.audio.currentRow)
       }
-      this.showPopover()
+      // this.showPopover()
     },
     audioEended() {
       this.audio.playing = false

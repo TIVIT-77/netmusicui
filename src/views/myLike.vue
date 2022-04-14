@@ -1,9 +1,10 @@
 <template>
   <div>
-    <template v-if="this.$store.state.userCookie">
+    <template v-if="this.$store.state.userCookie || $route.meta.stateType == 2">
       <el-table :data="tableData" style="width: 100%">
-        <el-table-column prop="name" label="歌曲名"></el-table-column>
-        <el-table-column prop="singsString" label="歌手"> </el-table-column>
+        <el-table-column type="index" width="50px"></el-table-column>
+        <el-table-column prop="name" label="歌曲名" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="singsString" label="歌手" show-overflow-tooltip> </el-table-column>
         <el-table-column prop="dt" label="时长" :formatter="formatSecond"> </el-table-column>
       </el-table>
     </template>
@@ -36,11 +37,13 @@ export default {
         this.init()
       }
     },
+    '$route.meta'(val) {
+      this.tableData=[]
+      this.init()
+    },
   },
   created() {
-    if (this.$store.state.userCookie) {
-      this.init()
-    }
+    this.init()
   },
   data() {
     return {
@@ -50,19 +53,31 @@ export default {
   },
   methods: {
     init() {
-      this.axios('/api/likelist', {
-        params: {
-          uid: this.$store.state.userInfo.account.id,
-        },
-      }).then((res) => {
-        this.likeIdsList = res.data.ids
-        this.axios('/api/song/detail', {
+      if (this.$store.state.userCookie && this.$route.meta.stateType == 1) {
+        this.axios('/api/likelist', {
           params: {
-            ids: this.likeIdsList.join(','),
+            uid: this.$store.state.userInfo.account.id,
           },
         }).then((res) => {
-          this.handleSongs(res.data.songs)
+          this.likeIdsList = res.data.ids
+          this.axios('/api/song/detail', {
+            params: {
+              ids: this.likeIdsList.join(','),
+            },
+          }).then((res) => {
+            this.handleSongs(res.data.songs)
+          })
         })
+      } else if (this.$route.meta.stateType == 2) {
+        this.recentSongs()
+      }
+    },
+    recentSongs() {
+      this.axios('/api/record/recent/song').then((res) => {
+        let songs = res.data.data.list.map((item) => {
+          return item.data
+        })
+        this.handleSongs(songs)
       })
     },
     handleSongs(songs, playlistItem = {}) {

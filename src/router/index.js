@@ -10,69 +10,73 @@ import recentlyPlayed from '../views/recentlyPlayed.vue'
 import auditionList from '../views/auditionList.vue'
 import myLikeListVue from '../views/myLikeList.vue'
 import search from '../views/search.vue'
-
-
 Vue.use(VueRouter)
 // 解决导航栏或者底部导航tabBar中的vue-router在3.0版本以上频繁点击菜单报错的问题。
 const originalPush = VueRouter.prototype.push
-VueRouter.prototype.push = function push (location) {
-  return originalPush.call(this, location).catch(err => err)
+VueRouter.prototype.push = function push(location) {
+  return originalPush.call(this, location).catch((err) => err)
 }
 
-const routes = [{
+const routes = [
+  {
     path: '/',
-    component:Home,
+    component: Home,
     children: [
       {
-        path:"",
-        redirect:"/musicHall",
+        path: '',
+        redirect: '/musicHall',
       },
       {
-        path:"recommend",
-        component:recommend,
+        path: 'recommend',
+        component: recommend,
       },
       {
         path: 'musicHall',
-        component:musicHall,
+        component: musicHall,
       },
       {
         path: 'videoMV',
-        component:videoMV,
+        component: videoMV,
       },
       {
         path: 'radioStation',
-        component:radioStation,
+        component: radioStation,
       },
       {
         path: 'myLike',
-        component:myLike,
+        component: myLike,
+        meta: {
+          name: '我的喜欢',
+          stateType: 1,
+        },
       },
       {
         path: 'recentlyPlayed',
-        component:recentlyPlayed,
+        component: myLike,
+        meta: {
+          name: '最近播放',
+          stateType: 2,
+        },
       },
       {
         path: 'auditionList',
-        component:auditionList,
+        component: auditionList,
       },
       {
         path: 'myLikeList',
-        component:myLikeListVue,
+        component: myLikeListVue,
       },
       {
         path: 'search',
-        component:search,
+        component: search,
       },
-
-    ]
+    ],
   },
-
-
-
 ]
 
 const router = new VueRouter({
-  routes
+  routes,
 })
 
 export default router
+

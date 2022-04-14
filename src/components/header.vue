@@ -33,10 +33,10 @@
           <el-button type="primary" icon="el-icon-check" circle @click="login" style="background-color: white; color: black"></el-button>
         </div>
       </div>
-      <div v-else class="user">
+      <div v-else class="user" style="margin-right: 15px;">
         <div>
-          <span style="display: block; height: 15px">{{ username }}</span>
-          <el-button type="text" @click="logout">注销</el-button>
+          <span style="display: block; height: 20px;font-family: emoji;margin-right: 5px;">{{ username }}</span>
+          <el-button type="text" @click="logout" id="logOutBtn">注销</el-button>
         </div>
         <el-avatar :src="userImgUrl" :alt="username"></el-avatar>
       </div>
@@ -224,5 +224,9 @@ export default {
 }
 .el-icon-arrow-right:hover {
   color: #fff;
+}
+#logOutBtn{
+  margin: 0;
+  padding: 0;
 }
 </style>

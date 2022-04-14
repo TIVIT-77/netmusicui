@@ -45,7 +45,7 @@ export default {
       for (let item of this.$store.state.recommendResource) {
         list.push(item)
       }
-      list.slice(0, 7) //只取六个
+      list=list.slice(0, 6) //只取六个
       return list
     },
     recommendSongsList() {

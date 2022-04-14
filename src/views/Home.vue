@@ -8,7 +8,7 @@
         <headerVue></headerVue>
       </el-header>
       <el-main>
-        <mtw-scroll>
+        <mtw-scroll ref="mtwScroll">
           <router-view></router-view>
         </mtw-scroll>
       </el-main>
@@ -24,6 +24,11 @@ import headerVue from '../components/header.vue'
 import footerVue from '../components/footer.vue'
 export default {
   components: { asideMenu, headerVue, footerVue },
+  watch: {
+    $route(val) {
+      this.$refs["mtwScroll"].scrollTo({x:0,y:0},0)
+    },
+  },
 }
 </script>
 <style lang="scss">
