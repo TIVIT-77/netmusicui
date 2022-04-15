@@ -54,14 +54,16 @@ function realFormatSecond(second) {
 import axios from 'axios'
 export default {
   mounted() {
-      this.scrollEnd()
+    this.scrollEnd()
   },
   updated() {
-      this.scrollEnd()
+    this.scrollEnd()
   },
   watch: {
-    '$store.state.searchSongs'(val) {
-      console.log(val)
+    '$store.state.searchPageNum'(val) {
+      if(val==1){
+        this.$refs["searchTable"].bodyWrapper.scrollTop=0
+      }
     },
   },
   data() {
@@ -82,7 +84,6 @@ export default {
         let dom = document.querySelector('.el-table__body-wrapper')
         dom.addEventListener('scroll', (v) => {
           const scrollDistance = dom.scrollHeight - dom.scrollTop - dom.clientHeight
-          console.log(scrollDistance)
           // 判断是否到底，并且防止用户重复触发，可以加载下一页
           if (scrollDistance <= 1 && this.isLoading == false) {
             if (this.$store.state.searchPageNum < 11) {
@@ -90,7 +91,7 @@ export default {
               setTimeout(() => {
                 this.$store.commit('updateSearchPageNum', ++this.$store.state.searchPageNum)
                 this.isLoading = false
-              }, 3000)
+              }, 1000)
             } else {
               this.isEnd = true
             }
@@ -99,9 +100,10 @@ export default {
       }
     },
     handleCurrentChange(row) {
-      this.$store.state.audioSrc.unshift(row)
+      // this.$store.state.audioSrc.unshift(row)
       // this.playList.unshift(row)
       // this.$store.commit('updateAudioSrc', this.playList)
+      this.$store.commit('updateAudioSrc', { data: this.$store.state.searchSongs, currentIndex: row.index })
     },
     //设置表头行的样式
     tableHeaderColor({ row, column, rowIndex, columnIndex }) {
@@ -119,12 +121,18 @@ export default {
         case 1:
           if (this.selectedList && this.selectedList.length > 0) {
             this.$store.state.audioSrc.unshift(...this.selectedList)
+            this.$notify.success('添加播放列表成功')
           } else {
             this.$message.error('你还没有选中歌曲')
           }
           break
         case 2:
-          this.$store.state.auditionList.unshift(...this.selectedList)
+          if (this.selectedList && this.selectedList.length > 0) {
+            this.$store.state.auditionList.unshift(...this.selectedList)
+            this.$notify.success('添加试听列表成功')
+          } else {
+            this.$message.error('你还没有选中歌曲')
+          }
           break
       }
     },

@@ -10,32 +10,32 @@ import vuescroll from 'vuescroll'
 import '../src/assets/fontsStyle/iconfont.js'
 import '../src/assets/fontsStyle/iconfont.css'
 let loadingInstance = null
-let loadingState = false
+let loadingCount = 0//请求的个数
 // loading开始 方法
 function startLoading() {
-  if (!loadingState) {
-    loadingState = true
+  if (loadingCount == 0) {
     loadingInstance = Loading.service({
       lock: true,
       text: '拼命加载中...',
       target: '#app',
-      background: 'rgba(22, 23, 22,0.3)', // 遮罩层颜色
+      background: 'rgba(0, 0, 0,0.3)', // 遮罩层颜色
     })
   }
+  loadingCount++
 }
 
 // loading结束 方法
 function endLoading() {
-  if (loadingState) {
+  loadingCount--
+  if (loadingCount == 0) {
     loadingInstance.close()
   }
 }
-
+axios.defaults.crossDomain = true;
 // 添加请求拦截器
 axios.interceptors.request.use(
   (config) => {
     // 在发送请求之前做些什么
-    // console.log('axios请求拦截器的config：', config)
     startLoading()
     return config
   },
@@ -43,7 +43,6 @@ axios.interceptors.request.use(
     // 对请求错误做些什么
     Message.error('接口请求错误')
     // console.log(error)
-    endLoading()
     return Promise.reject(error)
   }
 )
@@ -52,8 +51,10 @@ axios.interceptors.request.use(
 axios.interceptors.response.use(
   (response) => {
     // 对响应数据做点什么
-    // console.log('axios响应拦截器的数据：', response)
     endLoading()
+    if (response.data.code != 200 && response.data.success != true) {
+      Message.error('接口返回失败')
+    }
     return response
   },
   (error) => {

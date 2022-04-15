@@ -1,11 +1,24 @@
 <template>
   <div>
-    <template v-if="this.$store.state.userCookie || $route.meta.stateType == 2">
-      <el-table :data="tableData" style="width: 100%">
+    <template v-if="this.$store.state.userCookie || this.$route.meta.stateType != 1">
+      <el-table
+        :data="tableData"
+        style="width: 100%"
+        empty-text="还没有歌曲数据哦，快去添加歌曲吧~ ♪ o(*´ω｀)o ♪"
+        row-key="id"
+        :key="updateTable"
+        highlight-current-row
+      >
         <el-table-column type="index" width="50px"></el-table-column>
         <el-table-column prop="name" label="歌曲名" show-overflow-tooltip></el-table-column>
         <el-table-column prop="singsString" label="歌手" show-overflow-tooltip> </el-table-column>
         <el-table-column prop="dt" label="时长" :formatter="formatSecond"> </el-table-column>
+        <el-table-column label="操作" v-if="this.$route.meta.stateType == 3">
+          <template slot-scope="scope"
+            ><el-button type="text" @click="handleCurrentChange(scope.row, scope.column, scope.$index)">播放</el-button
+            ><el-button type="text" @click="remove(scope.row, scope.column, scope.$index)">删除</el-button>
+          </template>
+        </el-table-column>
       </el-table>
     </template>
     <template v-else>
@@ -17,6 +30,7 @@
 </template>
 
 <script>
+import Sortable from 'sortablejs'
 function realFormatSecond(second) {
   var secondType = typeof second
   if (secondType === 'number' || secondType === 'string') {
@@ -38,7 +52,7 @@ export default {
       }
     },
     '$route.meta'(val) {
-      this.tableData=[]
+      this.tableData = []
       this.init()
     },
   },
@@ -49,7 +63,13 @@ export default {
     return {
       tableData: [],
       likeIdsList: [],
+      updateTable: false,
     }
+  },
+  updated() {
+    this.$nextTick(() => {
+      // this.rowDrop()
+    })
   },
   methods: {
     init() {
@@ -70,6 +90,11 @@ export default {
         })
       } else if (this.$route.meta.stateType == 2) {
         this.recentSongs()
+      } else if (this.$route.meta.stateType == 3) {
+        this.tableData = this.$store.state.auditionList
+        this.$nextTick(() => {
+          // this.rowDrop()
+        })
       }
     },
     recentSongs() {
@@ -113,6 +138,34 @@ export default {
     formatSecond(row) {
       return realFormatSecond(row.dt)
     },
+    remove(row, column, index) {
+      this.$store.state.auditionList.splice(index, 1)
+      console.log(row, index)
+    },
+    //行拖拽
+    rowDrop() {
+      if (this.tableData.length > 0) {
+        const tbody = document.querySelector('.el-table__body-wrapper tbody')
+        const _this = this
+        Sortable.create(tbody, {
+          animation: 1000,
+          dragClass: 'drag',
+          ghostClass: 'ghost',
+          forceFallback: true,
+          onEnd({ newIndex, oldIndex }) {
+            if (newIndex != oldIndex) {
+              const currRow = _this.tableData.splice(oldIndex, 1)[0]
+              _this.tableData.splice(newIndex, 0, currRow)
+              _this.updateTable = !_this.updateTable
+              _this.rowDrop()
+            }
+          },
+        })
+      }
+    },
+    handleCurrentChange(row, column, index) {
+      this.$store.commit('updateAudioSrc', { data: this.tableData, currentIndex: index })
+    },
   },
 }
 </script>
@@ -123,5 +176,14 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+::v-deep .el-table__empty-block {
+  height: 785px !important;
+}
+::v-deep .ghost {
+  background: #eff6fc8a !important;
+}
+::v-deep .drag {
+  opacity: 0.5 !important;
 }
 </style>

@@ -60,7 +60,11 @@ const routes = [
       },
       {
         path: 'auditionList',
-        component: auditionList,
+        component: myLike,
+        meta: {
+          name: '试听列表',
+          stateType: 3,
+        },
       },
       {
         path: 'myLikeList',

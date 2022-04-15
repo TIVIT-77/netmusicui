@@ -16,13 +16,13 @@
         :placeholder="placeholder"
         @focus="placeholder = defaultPlaceholder"
         @blur="placeholder = '搜索音乐'"
-        @change="$store.state.searchPageNum=1"
+        @change="autocompleteChange"
         :fetch-suggestions="querySearch"
         prefix-icon="el-icon-search"
         v-model="searchData"
         clearable
-        @keypress.native.enter="onEnterPress"
-        @select="onEnterPress"
+        @keypress.native.enter="onEnterPress('select')"
+        @select="onEnterPress('select')"
       ></el-autocomplete>
     </div>
     <div class="login">
@@ -33,9 +33,9 @@
           <el-button type="primary" icon="el-icon-check" circle @click="login" style="background-color: white; color: black"></el-button>
         </div>
       </div>
-      <div v-else class="user" style="margin-right: 15px;">
+      <div v-else class="user" style="margin-right: 15px">
         <div>
-          <span style="display: block; height: 20px;font-family: emoji;margin-right: 5px;">{{ username }}</span>
+          <span style="display: block; height: 20px; font-family: emoji; margin-right: 5px">{{ username }}</span>
           <el-button type="text" @click="logout" id="logOutBtn">注销</el-button>
         </div>
         <el-avatar :src="userImgUrl" :alt="username"></el-avatar>
@@ -54,9 +54,11 @@ export default {
     this.restaurants = this.loadAll()
   },
   watch: {
-    '$store.state.searchPageNum'(val) {
+    '$store.state.searchPageNum'(val, old) {
       this.pageNum = val
-      this.onEnterPress()
+      if (val > old || val == 1) {
+        this.onEnterPress()
+      }
     },
   },
   data() {
@@ -155,8 +157,11 @@ export default {
         }
       })
     },
-    onEnterPress() {
+    onEnterPress(type) {
       //网易云经典问题，返回数据延迟，使用post请求返回数据始终是第一次请求返回的旧数据，get请求则问题解决
+      if(type=='select'){
+        this.$store.state.searchPageNum=1;
+      }
       axios
         .get(`/api/cloudsearch`, {
           params: {
@@ -195,6 +200,14 @@ export default {
           this.pageNum == 1 ? this.$store.commit('updateSearchSongs', songs) : this.$store.state.searchSongs.push(...songs)
           this.$router.push('search')
         })
+        .catch((err) => {
+          this.$store.state.searchPageNum--
+        })
+    },
+    autocompleteChange(val) {
+      if (val) {
+        this.$store.state.searchPageNum = 1
+      }
     },
   },
 }
@@ -225,7 +238,7 @@ export default {
 .el-icon-arrow-right:hover {
   color: #fff;
 }
-#logOutBtn{
+#logOutBtn {
   margin: 0;
   padding: 0;
 }
