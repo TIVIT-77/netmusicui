@@ -19,7 +19,7 @@
 
         <h1>推荐MV</h1>
 
-        <el-carousel trigger="click" height="500px" :autoplay="false" indicator-position="outside">
+        <el-carousel trigger="click" height="500px" :autoplay="true" indicator-position="outside">
             <el-carousel-item v-for="(item, key) in mvRecommend" :label="item.name" :name="item.name" :key="key" >
                 <el-image fit="contain" :src="item.picUrl" @click="getMv(item, 1)"></el-image>
             </el-carousel-item>

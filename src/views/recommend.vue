@@ -3,8 +3,27 @@
     <div class="cardList">
       <p>每日歌单推荐</p>
       <div class="hotDjList">
-        <div class="hotDj" v-for="(item, i) in recommend" :key="i" @click="getPlayListAudio(i)">
+        <div
+          class="hotDj"
+          v-for="(item, i) in recommend"
+          :key="i"
+          @click.stop="
+            $router.push({
+              name: 'listDetail',
+              query: {
+                id: item.id,
+              },
+            })
+          "
+        >
           <img :src="item.picUrl" alt="item.name" width="100%" />
+          <div class="bottom">
+            <div>
+              <i class="el-icon-service"></i>
+              <span> {{ parseInt(item.playcount / 10000) }}万 </span>
+            </div>
+            <i class="el-icon-video-play" @click.stop="getPlayListAudio(i)"></i>
+          </div>
           <p class="annotation">
             <!-- <span>[{{ item.category }}]</span> -->
             <el-tooltip effect="dark" :content="item.copywriter" placement="bottom">
@@ -45,7 +64,7 @@ export default {
       for (let item of this.$store.state.recommendResource) {
         list.push(item)
       }
-      list=list.slice(0, 6) //只取六个
+      list = list.slice(0, 6) //只取六个
       return list
     },
     recommendSongsList() {
@@ -110,11 +129,11 @@ export default {
       })
       if (type == 'songs') {
         let songs = this.handleSongs(this.$store.state.recommendSongsList.dailySongs)
-        this.$store.commit('updateAudioSrc',{'data':songs,'currentIndex':i})
+        this.$store.commit('updateAudioSrc', { data: songs, currentIndex: i })
         loadingInstance.close()
       } else {
         axios(`/api/playlist/track/all?id=${this.$store.state.recommendResource[i].id}`).then((res) => {
-          let songs = this.handleSongs(res.data.songs,i)
+          let songs = this.handleSongs(res.data.songs, i)
           this.$store.commit('updateAudioSrc', songs)
           loadingInstance.close()
         })

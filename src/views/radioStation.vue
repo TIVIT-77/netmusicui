@@ -100,7 +100,11 @@ export default {
           console.log(songs[0].singsString)
           this.$store.commit('updateAudioSrc', songs)
         })
-      } else {
+      } else if(this.bannerInfoList[index].targetId && this.bannerInfoList[index].url && this.bannerInfoList[index].url.includes('orpheus://djradio/')){
+        let item=this.bannerInfoList[index]
+        item.id=item.targetId
+        this.getDjDetail(item)
+      }else {
         // window.location.href = this.bannerInfoList[index].url.replace('orpheus://','https://music.163.com/#/')
         window.open(this.bannerInfoList[index].url.replace('orpheus://', 'https://music.163.com/#/'))
       }

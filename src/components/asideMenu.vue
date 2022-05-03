@@ -8,10 +8,10 @@
                         <span>在线音乐</span>
                     </template>
                     <el-menu-item-group>
-                        <el-menu-item index="recommend" route="recommend">推荐</el-menu-item>
-                        <el-menu-item index="musicHall" route="musicHall">音乐馆</el-menu-item>
-                        <el-menu-item index="videoMV" route="videoMV">视频MV</el-menu-item>
-                        <el-menu-item index="radioStation" route="radioStation">电台</el-menu-item>
+                        <el-menu-item index="recommend">推荐</el-menu-item>
+                        <el-menu-item index="musicHall">音乐馆</el-menu-item>
+                        <el-menu-item index="videoMV">视频MV</el-menu-item>
+                        <el-menu-item index="radioStation">电台</el-menu-item>
                     </el-menu-item-group>
                 </el-submenu>
                 <el-submenu index="2">
@@ -19,9 +19,9 @@
                         <span>我的音乐</span>
                     </template>
                     <el-menu-item-group>
-                        <el-menu-item index="myLike" route="myLike">我喜欢</el-menu-item>
-                        <el-menu-item index="recentlyPlayed" route="recentlyPlayed">最近播放</el-menu-item>
-                        <el-menu-item index="auditionList" route="auditionList">试听列表</el-menu-item>
+                        <el-menu-item index="myLike">我喜欢</el-menu-item>
+                        <el-menu-item index="recentlyPlayed">最近播放</el-menu-item>
+                        <el-menu-item index="auditionList">试听列表</el-menu-item>
                     </el-menu-item-group>
                 </el-submenu>
                 <el-submenu index="3">
@@ -29,7 +29,7 @@
                         <span>我的歌单</span>
                     </template>
                     <el-menu-item-group>
-                        <el-menu-item index="myLikeList" route="myLikeList">我的喜欢歌单</el-menu-item>
+                        <el-menu-item index="myLikeList">我的喜欢歌单</el-menu-item>
                     </el-menu-item-group>
                 </el-submenu>
             </el-menu>

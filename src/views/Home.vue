@@ -26,7 +26,7 @@ export default {
   components: { asideMenu, headerVue, footerVue },
   watch: {
     $route(val) {
-      this.$refs["mtwScroll"].scrollTo({x:0,y:0},0)
+      this.$refs['mtwScroll'].scrollTo({ x: 0, y: 0 }, 0)
     },
   },
 }
@@ -79,6 +79,25 @@ export default {
     .hotDj {
       width: 215px;
       margin: 25px;
+      position: relative;
+      .bottom {
+        position: absolute;
+        top: 180px;
+        width: 215px;
+        color: white;
+        background-color: #242424;
+        opacity: 0.7;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        .el-icon-service{
+          margin-left: 15px;
+        }
+        .el-icon-video-play{
+          margin-right: 15px;
+          cursor: pointer;
+        }
+      }
       img {
         cursor: pointer;
       }

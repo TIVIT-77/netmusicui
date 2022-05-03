@@ -6,10 +6,9 @@ import musicHall from '../views/musicHall.vue'
 import videoMV from '../views/videoMV.vue'
 import radioStation from '../views/radioStation.vue'
 import myLike from '../views/myLike.vue'
-import recentlyPlayed from '../views/recentlyPlayed.vue'
-import auditionList from '../views/auditionList.vue'
 import myLikeListVue from '../views/myLikeList.vue'
 import search from '../views/search.vue'
+import listDetail from '../views/listDetail.vue'
 Vue.use(VueRouter)
 // 解决导航栏或者底部导航tabBar中的vue-router在3.0版本以上频繁点击菜单报错的问题。
 const originalPush = VueRouter.prototype.push
@@ -68,7 +67,13 @@ const routes = [
       },
       {
         path: 'myLikeList',
+        name: 'myLikeList',
         component: myLikeListVue,
+      },
+      {
+        path: 'listDetail',
+        name: 'listDetail',
+        component: listDetail,
       },
       {
         path: 'search',

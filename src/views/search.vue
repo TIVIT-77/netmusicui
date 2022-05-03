@@ -16,7 +16,7 @@
         :row-style="{ cursor: 'pointer', 'background-color': '#eceeec' }"
         :header-cell-style="tableHeaderColor"
         highlight-current-row
-        @row-click="handleCurrentChange"
+        @current-change="handleCurrentChange"
         @select="select($event)"
         @select-all="select($event)"
       >
@@ -100,10 +100,11 @@ export default {
       }
     },
     handleCurrentChange(row) {
-      // this.$store.state.audioSrc.unshift(row)
       // this.playList.unshift(row)
-      // this.$store.commit('updateAudioSrc', this.playList)
-      this.$store.commit('updateAudioSrc', { data: this.$store.state.searchSongs, currentIndex: row.index })
+      console.log(row);
+      this.$store.state.audioSrc=[row]
+      this.$store.state.currentIndex=0
+      // this.$store.commit('updateAudioSrc', { data: this.$store.state.searchSongs, currentIndex: row.index })
     },
     //设置表头行的样式
     tableHeaderColor({ row, column, rowIndex, columnIndex }) {

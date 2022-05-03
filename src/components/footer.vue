@@ -184,14 +184,15 @@ export default {
   },
   watch: {
     '$store.state.audioSrc'(val) {
-      if (val.length > 0) {
-        this.audio.index = this.$store.state.currentIndex-1
+      console.log(this.$store.state.currentIndex)
+      if (val.length > 0 && this.audio.index != val) {
+        this.audio.index = this.$store.state.currentIndex - 1
         this.next()
       }
       this.$message.success('播放列表已更新')
     },
-    'audio.index'(val){
-      this.$store.state.currentIndex=val
+    'audio.index'(val) {
+      this.$store.state.currentIndex = val
     },
     '$store.state.userInfo'(val) {
       this.likeList()
@@ -260,7 +261,7 @@ export default {
     }
   },
   methods: {
-    showPopover(){
+    showPopover() {
       this.$nextTick(() => {
         let currentRow = document.querySelector('.el-popover .current-row')
         currentRow.scrollIntoView({ block: 'center' })
@@ -284,8 +285,8 @@ export default {
     },
     // 下一首
     next() {
-      // console.log(this.audio.index, this.$store.state.audioSrc.length)
-      if (this.audio.index < this.$store.state.audioSrc.length) {
+      // console.log(this.audio.index, this.$store.state.audioSrc.length-1)
+      if (this.audio.index < this.$store.state.audioSrc.length-1) {
         this.playability(++this.audio.index)
       } else {
         this.$store.state.audioSrc.length == 0
@@ -327,26 +328,28 @@ export default {
     },
     // 检查音乐是否可用
     async checkSong(i) {
-      await axios(`/api/check/music?id=${this.$store.state.audioSrc[i].id}`)
-        .then((res) => {
-          console.log('歌曲ID======', this.$store.state.audioSrc[i].id, res.data)
-          this.audio.abilityPlay = res.data.success
-          this.$notify.success({
-            title: res.data.message,
-            message: `为您播放 《${this.$store.state.audioSrc[i].name}》 ${this.$store.state.audioSrc[i].singsString}`,
+      if (this.$store.state.audioSrc && this.$store.state.audioSrc[i] && this.$store.state.audioSrc[i].id) {
+        await axios(`/api/check/music?id=${this.$store.state.audioSrc[i].id}`)
+          .then((res) => {
+            console.log('歌曲ID======', this.$store.state.audioSrc[i].id, res.data)
+            this.audio.abilityPlay = res.data.success
+            this.$notify.success({
+              title: res.data.message,
+              message: `为您播放 《${this.$store.state.audioSrc[i].name}》 ${this.$store.state.audioSrc[i].singsString}`,
+            })
+            this.audio.abilityPlay = true
           })
-          this.audio.abilityPlay = true
-        })
-        .catch((err) => {
-          console.log('err================', err)
-          console.log('err.response=======', err.response)
-          this.audio.abilityPlay = false
-          this.$notify.error({
-            title: `Sorry`,
-            message: `歌曲： ${this.$store.state.audioSrc[i].name},${err.response.data.message.slice(-4)}`,
+          .catch((err) => {
+            console.log('err================', err)
+            console.log('err.response=======', err.response)
+            this.audio.abilityPlay = false
+            this.$notify.error({
+              title: `Sorry`,
+              message: `歌曲： ${this.$store.state.audioSrc[i].name},${err.response.data.message.slice(-4)}`,
+            })
+            this.audio.abilityPlay = false
           })
-          this.audio.abilityPlay = false
-        })
+      }
       return this.audio.abilityPlay
     },
     getMaxTime(val) {
@@ -406,7 +409,6 @@ export default {
           .then((res) => [
             this.$store.commit('updateLikeIdsList', res.data.ids),
             (this.likeStarFlag = this.$store.state.likeIdslist.includes(this.audio.musicId)),
-            console.log(this.$store.state.likeIdslist, this.audio.musicId, this.$store.state.likeIdslist.includes(this.audio.musicId)),
           ])
       }
     },
@@ -546,7 +548,7 @@ export default {
   }
   .lyricBox {
     height: 700px;
-    overflow: hidden;
+    overflow: auto;
     display: flex;
     .el-table {
       margin: auto;

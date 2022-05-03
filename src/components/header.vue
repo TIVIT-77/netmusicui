@@ -31,6 +31,7 @@
           <i class="el-icon-user" style="font-size: 30px"></i>&emsp; <el-input v-model="phone" placeholder="请输入手机号" clearable></el-input>&emsp;
           <el-input placeholder="请输入密码" v-model="password" show-password clearable></el-input>&emsp;
           <el-button type="primary" icon="el-icon-check" circle @click="login" style="background-color: white; color: black"></el-button>
+          <el-button type="text" @click="register">注册</el-button>
         </div>
       </div>
       <div v-else class="user" style="margin-right: 15px">
@@ -41,6 +42,19 @@
         <el-avatar :src="userImgUrl" :alt="username"></el-avatar>
       </div>
     </div>
+    <el-dialog title="手机号注册" :visible.sync="dialogVisible" width="30%" :close-on-click-modal="false">
+      <el-input placeholder="请输入手机号" v-model="phone" clearable type="tel" ref="telInput"></el-input>
+      <el-input placeholder="请输入验证码" v-model="verificationCode" clearable>
+        <el-button slot="append" @click="getVerificationCode" :class="verificationCodeLabel == '发送验证码'?'':'prohibited'">{{ verificationCodeLabel }}</el-button>
+      </el-input>
+      <el-input placeholder="请输入密码" v-model="password" show-password clearable></el-input>
+      <p class="passTip">密码8-20位，至少包含字母数字字符2种组合</p>
+      <el-input placeholder="请输入昵称" v-model="nickName" clearable></el-input>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="submit">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -75,6 +89,10 @@ export default {
       pageSize: 30,
       pageNum: 1,
       searchType: 1, //type: 搜索类型；默认为 1 即单曲 , 取值意义 : 1: 单曲, 10: 专辑, 100: 歌手, 1000: 歌单, 1002: 用户, 1004: MV, 1006: 歌词, 1009: 电台, 1014: 视频, 1018:综合
+      dialogVisible: false,
+      verificationCode: '',
+      verificationCodeLabel: '发送验证码',
+      nickName: '',
     }
   },
   methods: {
@@ -104,17 +122,110 @@ export default {
     },
     login() {
       axios
-        .post(`/api/login/cellphone`, {
+        .post('/api/cellphone/existence/check', {
           phone: this.phone,
-          password: this.password,
         })
         .then((res) => {
-          let loadingInstance = this.$loading({
-            text: '正在登录',
-            target: document.querySelector('section'),
-            background: 'rgba(0, 0, 0,0.5)',
+          if (res.data && res.data.code == 200 && res.data.exist == 1 && res.data.hasPassword) {
+            axios
+              .post(`/api/login/cellphone`, {
+                phone: this.phone,
+                password: this.password,
+              })
+              .then((res) => {
+                let loadingInstance = this.$loading({
+                  text: '正在登录',
+                  target: document.querySelector('section'),
+                  background: 'rgba(0, 0, 0,0.5)',
+                })
+                if (res && res.data && res.data.profile) {
+                  this.$message.success(`登陆成功，${res.data.profile.nickname} 欢迎回来`)
+                  // console.log(res)
+                  // console.log(res.data.profile.avatarUrl)
+                  // console.log(res.data.profile.nickname);
+                  this.username = res.data.profile.nickname
+                  this.userImgUrl = res.data.profile.avatarUrl
+                  this.userId = res.data.profile.userId
+                  this.$store.commit('updateUserCookie', res.data.cookie)
+                  this.$store.commit('updateUserInfo', res.data)
+                  //获取每日推荐歌单
+                  axios
+                    .post(`/api/recommend/resource`, {
+                      cookie: this.$store.state.userCookie,
+                    })
+                    .then((res) => {
+                      // this.$store.state.recommendResource=res.data.recommend;
+                      this.$store.commit('updateRecommend', res.data.recommend)
+                      // console.log(res);
+                    })
+                  //获取每日推荐歌曲
+                  axios.get('/api/recommend/songs').then((res) => {
+                    this.$store.commit('updateRecommendSongsList', res.data.data)
+                  })
+                } else {
+                  // return this.$message.error('登录失败')
+                }
+                loadingInstance.close()
+              })
+          } else {
+            this.$message.error('手机号尚未注册')
+          }
+        })
+    },
+    register() {
+      this.dialogVisible = true
+    },
+    getVerificationCode() {
+      if (this.phone && this.phone.length == 11) {
+        if (this.verificationCodeLabel == '发送验证码') {
+          this.axios(`/api/captcha/sent?phone=${this.phone}`).then((res) => {
+            if (res.data.data && res.data.code == 200) {
+              this.$message.success(`验证码已发送到手机号:${this.phone},请注意查收！`)
+              this.verificationCodeLabel = 60
+              let timer = setInterval(() => {
+                this.verificationCodeLabel--
+                if (this.verificationCodeLabel <= 0) {
+                  clearInterval(timer)
+                  this.verificationCodeLabel = '发送验证码'
+                }
+              }, 1000)
+            }
           })
-          if (res && res.data && res.data.profile) {
+        }
+      } else {
+        this.$message.error(this.phone ? '请输入正确格式十一位手机号' : '请输入手机号')
+        this.$refs.telInput.focus()
+      }
+    },
+    submit() {
+      if (!this.phone) {
+        this.$message.error('请输入手机号')
+        return
+      }
+      if (!this.verificationCode) {
+        this.$message.error('请输入验证码')
+        return
+      }
+      if (!this.password) {
+        this.$message.error('请输入密码')
+        return
+      }
+      if (!this.nickName) {
+        this.$message.error('请输入昵称')
+        return
+      }
+      this.axios
+        .get('/api/register/cellphone', {
+          params: {
+            captcha: this.verificationCode,
+            phone: this.phone,
+            password: this.password,
+            nickname: this.nickName,
+          },
+        })
+        .then((res) => {
+          if (res.data && res.data.code == 200) {
+            this.dialogVisible = false
             this.$message.success(`登陆成功，${res.data.profile.nickname} 欢迎回来`)
             // console.log(res)
             // console.log(res.data.profile.avatarUrl)
@@ -124,28 +235,21 @@ export default {
             this.userId = res.data.profile.userId
             this.$store.commit('updateUserCookie', res.data.cookie)
             this.$store.commit('updateUserInfo', res.data)
-          } else {
-            return this.$message.error('登录失败')
+            //获取每日推荐歌单
+            axios
+              .post(`/api/recommend/resource`, {
+                cookie: this.$store.state.userCookie,
+              })
+              .then((res) => {
+                // this.$store.state.recommendResource=res.data.recommend;
+                this.$store.commit('updateRecommend', res.data.recommend)
+                // console.log(res);
+              })
+            //获取每日推荐歌曲
+            axios.get('/api/recommend/songs').then((res) => {
+              this.$store.commit('updateRecommendSongsList', res.data.data)
+            })
           }
-          loadingInstance.close()
-        })
-        .then(() => {
-          //获取每日推荐歌单
-          axios
-            .post(`/api/recommend/resource`, {
-              cookie: this.$store.state.userCookie,
-            })
-            .then((res) => {
-              // this.$store.state.recommendResource=res.data.recommend;
-              this.$store.commit('updateRecommend', res.data.recommend)
-              // console.log(res);
-            })
-        })
-        .then(() => {
-          //获取每日推荐歌曲
-          axios.get('/api/recommend/songs').then((res) => {
-            this.$store.commit('updateRecommendSongsList', res.data.data)
-          })
         })
     },
     logout() {
@@ -159,8 +263,8 @@ export default {
     },
     onEnterPress(type) {
       //网易云经典问题，返回数据延迟，使用post请求返回数据始终是第一次请求返回的旧数据，get请求则问题解决
-      if(type=='select'){
-        this.$store.state.searchPageNum=1;
+      if (type == 'select') {
+        this.$store.state.searchPageNum = 1
       }
       axios
         .get(`/api/cloudsearch`, {
@@ -241,5 +345,24 @@ export default {
 #logOutBtn {
   margin: 0;
   padding: 0;
+}
+.el-icon-arrow-left,
+.el-icon-arrow-right,
+.el-icon-refresh {
+  cursor: pointer;
+}
+.el-input-group__append {
+  border-radius: 0 20px 20px 0;
+}
+.passTip {
+  text-align: left;
+  height: 15px;
+  line-height: 15px;
+  margin: 0;
+  padding: 0;
+  padding-left: 15px;
+}
+.prohibited:hover{
+  cursor: not-allowed;
 }
 </style>

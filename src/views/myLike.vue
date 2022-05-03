@@ -8,16 +8,14 @@
         row-key="id"
         :key="updateTable"
         highlight-current-row
+        @current-change="handleCurrentChange"
       >
         <el-table-column type="index" width="50px"></el-table-column>
         <el-table-column prop="name" label="歌曲名" show-overflow-tooltip></el-table-column>
         <el-table-column prop="singsString" label="歌手" show-overflow-tooltip> </el-table-column>
         <el-table-column prop="dt" label="时长" :formatter="formatSecond"> </el-table-column>
         <el-table-column label="操作" v-if="this.$route.meta.stateType == 3">
-          <template slot-scope="scope"
-            ><el-button type="text" @click="handleCurrentChange(scope.row, scope.column, scope.$index)">播放</el-button
-            ><el-button type="text" @click="remove(scope.row, scope.column, scope.$index)">删除</el-button>
-          </template>
+          <template slot-scope="scope"><el-button type="text" @click.stop="remove(scope.row, scope.column, scope.$index)">删除</el-button> </template>
         </el-table-column>
       </el-table>
     </template>
@@ -30,7 +28,6 @@
 </template>
 
 <script>
-import Sortable from 'sortablejs'
 function realFormatSecond(second) {
   var secondType = typeof second
   if (secondType === 'number' || secondType === 'string') {
@@ -74,11 +71,7 @@ export default {
   methods: {
     init() {
       if (this.$store.state.userCookie && this.$route.meta.stateType == 1) {
-        this.axios('/api/likelist', {
-          params: {
-            uid: this.$store.state.userInfo.account.id,
-          },
-        }).then((res) => {
+        this.axios(`/api/likelist?uid=${this.$store.state.userInfo.account.id}`).then((res) => {
           this.likeIdsList = res.data.ids
           this.axios('/api/song/detail', {
             params: {
@@ -163,8 +156,8 @@ export default {
         })
       }
     },
-    handleCurrentChange(row, column, index) {
-      this.$store.commit('updateAudioSrc', { data: this.tableData, currentIndex: index })
+    handleCurrentChange(row, column) {
+      this.$store.commit('updateAudioSrc', [row])
     },
   },
 }

@@ -7,6 +7,7 @@ import ElementUi from 'element-ui'
 import { Message, Loading } from 'element-ui'
 import axios from 'axios'
 import vuescroll from 'vuescroll'
+import dayjs from 'dayjs'
 import '../src/assets/fontsStyle/iconfont.js'
 import '../src/assets/fontsStyle/iconfont.css'
 let loadingInstance = null
@@ -53,13 +54,14 @@ axios.interceptors.response.use(
     // 对响应数据做点什么
     endLoading()
     if (response.data.code != 200 && response.data.success != true) {
-      Message.error('接口返回失败')
+      Message.error(response.data.msg||response.data.message||'接口返回失败')
     }
     return response
   },
   (error) => {
     // 对响应错误做点什么
-    Message.error('接口响应错误')
+    Message.error(error.response.data.msg||error.response.data.message||'接口响应错误')
+    console.log(error.response);
     // console.log('axios响应拦截器的错误数据：', error)
     endLoading()
     return Promise.reject(error)
@@ -86,6 +88,7 @@ Vue.use(vuescroll, {
   name: 'mtwScroll', // 在这里自定义组件名字，默认是vueScroll
 })
 Vue.prototype.axios = axios
+Vue.prototype.dayjs = dayjs
 Vue.config.productionTip = false
 
 new Vue({
