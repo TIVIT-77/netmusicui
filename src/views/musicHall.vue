@@ -78,7 +78,7 @@ export default {
           //   target: document.querySelector('main'),
           //   background: 'rgba(0, 0, 0,0.5)', // 遮罩层颜色
           // })
-          this.handleSongs(res.data.songs)
+          res.data.songs.length>0?this.handleSongs(res.data.songs):this.$message.error('读取不到歌曲数据')
           // loadingInstance.close()
         })
       }
